@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'sacred_garden',
 ]
 
 MIDDLEWARE = [
@@ -146,6 +147,8 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
    "http://localhost:4200",
 ]
+
+AUTH_USER_MODEL = "sacred_garden.User"
 
 import django
 from django.utils.encoding import smart_str
