@@ -9,6 +9,9 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
 
+    partner_user = models.OneToOneField('self', models.CASCADE, blank=True, null=True)
+    partner_invite_code = models.CharField(max_length=50, blank=True, null=True)
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -16,4 +19,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
-
