@@ -15,6 +15,7 @@ class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
 
     partner_user = models.OneToOneField('self', models.CASCADE, blank=True, null=True)
+    partner_name = models.CharField(max_length=50, blank=True, null=True)
     partner_invite_code = models.CharField(max_length=50, blank=True, null=True)
 
     USERNAME_FIELD = "email"
@@ -39,3 +40,19 @@ def populate_partner_invite_code_for_new_user(sender, instance, update_fields, *
     # When user is created
     if instance.pk is None and instance.partner_invite_code is None:
         instance.populate_partner_invite_code()
+
+    # When partner is disconnected and invite code is empty
+    # is_partner_disconnected = 'partner_user' in update_fields and instance.partner_user is None
+    # is_invite_code_empty = instance.partner_invite_code is None
+    # if is_partner_disconnected and is_invite_code_empty :
+    #     instance.populate_partner_invite_code()
+
+
+def connect_partners(user1, user2):
+    user1.partner_user = user2
+    user1.partner_invite_code = None
+    user1.save()
+
+    user2.partner_user = user1
+    user2.partner_invite_code = None
+    user2.save()
