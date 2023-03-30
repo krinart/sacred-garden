@@ -30,8 +30,8 @@ class User(AbstractUser):
         self.partner_invite_code = get_new_invite_code()
 
 
-def get_new_invite_code(n=6):
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, n=n))
+def get_new_invite_code(k=6):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=k))
 
 
 @receiver(pre_save, sender=User)
@@ -55,4 +55,14 @@ def connect_partners(user1, user2):
 
     user2.partner_user = user1
     user2.partner_invite_code = None
+    user2.save()
+
+
+def disconnect_partners(user1, user2):
+    user1.partner_user = None
+    user1.populate_partner_invite_code()
+    user1.save()
+
+    user2.partner_user = None
+    user2.populate_partner_invite_code()
     user2.save()
