@@ -1,8 +1,9 @@
-from django.test import TestCase
-
-from sacred_garden import models
-
 from unittest import mock
+
+from django.test import TestCase
+from rest_framework.test import APIRequestFactory, force_authenticate, APIClient
+
+from sacred_garden import models, views
 
 
 class TestUserCreate(TestCase):
@@ -66,3 +67,46 @@ class TestDisconnectPartners(TestCase):
 
         self.assertIsNotNone(user1.partner_invite_code)
         self.assertIsNotNone(user2.partner_invite_code)
+
+
+class ApiTestCase(TestCase):
+
+    def request_get(self, url, auth_user=None):
+        client = APIClient()
+        if auth_user:
+            client.force_authenticate(user=auth_user)
+
+        return client.get(url)
+
+    def assertSuccess(self, actual_response, expected_response=None, expected_status_code=200):
+        self.assertEqual(actual_response.status_code, expected_status_code)
+
+    def assertUnAuthorized(self, actual_response):
+        pass
+
+
+class TestUserViewSet(ApiTestCase):
+
+    def setUp(self):
+        self.user1 = models.User.objects.create(
+            email='user1@example.com',
+            first_name='John',
+            partner_name='Eva_Love')
+
+        self.user2 = models.User.objects.create(
+            email='user2@example.com',
+            first_name='Eva',
+            partner_name='John_Love')
+
+    def test_unauthorized(self):
+        response = self.request_get('/api/sacred_garden/v1/users/me/')
+        self.assertUnAuthorized(response)
+
+    def test_success_without_partner(self):
+        response = self.request_get('/api/sacred_garden/v1/users/me/', auth_user=self.user1)
+        self.assertSuccess(response)
+
+    def test_success_with_partner(self):
+        models.connect_partners(self.user1, self.user2)
+        response = self.request_get('/api/sacred_garden/v1/users/me/', auth_user=self.user1)
+        self.assertSuccess(response)
