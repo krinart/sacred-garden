@@ -1,28 +1,17 @@
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
-from rest_framework import serializers
+from rest_framework import mixins, viewsets
+from rest_framework.decorators import action
 
 from sacred_garden import models
+from sacred_garden import serializers
 
 
-class PartnerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.User
-        fields = ['id', 'first_name']
+class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserUpdateSerializer
 
-class HomeSerializer(serializers.ModelSerializer):
-
-    partner_user = PartnerSerializer()
-
-    class Meta:
-        model = models.User
-        fields = ['id', 'first_name',
-                  'partner_user', 'partner_name', 'partner_invite_code']
-
-
-@api_view()
-def home(request):
-    serializer = HomeSerializer(request.user)
-    return Response(serializer.data)
+    @action(detail=False, methods=['GET'])
+    def me(self, request):
+        serializer = serializers.HomeSerializer(request.user)
+        return Response(serializer.data)

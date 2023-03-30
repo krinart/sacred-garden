@@ -21,12 +21,12 @@ from rest_framework import routers
 
 from sacred_garden import views
 
-# router = routers.DefaultRouter()
-# router.register(r'home', views.home, basename='home')
+router = routers.SimpleRouter()
+router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/sacred_garden/home/', views.home),
+    path('api/sacred_garden/v1/', include(router.urls)),
 
     path('api-token-auth/', obtain_jwt_token),
     path('api-token-refresh/', refresh_jwt_token),
