@@ -37,15 +37,14 @@ def get_new_invite_code(k=6):
 @receiver(pre_save, sender=User)
 def populate_partner_invite_code_for_new_user(sender, instance, update_fields, **kwargs):
 
-    # When user is created
-    if instance.pk is None and instance.partner_invite_code is None:
-        instance.populate_partner_invite_code()
+    # When user is being created (before saving)
+    if instance.pk is None:
+        initialize_user(instance)
 
-    # When partner is disconnected and invite code is empty
-    # is_partner_disconnected = 'partner_user' in update_fields and instance.partner_user is None
-    # is_invite_code_empty = instance.partner_invite_code is None
-    # if is_partner_disconnected and is_invite_code_empty :
-    #     instance.populate_partner_invite_code()
+
+def initialize_user(user):
+    if user.partner_invite_code is None:
+        user.populate_partner_invite_code()
 
 
 def connect_partners(user1, user2):
