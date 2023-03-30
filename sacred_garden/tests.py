@@ -11,8 +11,7 @@ class TestUserCreate(TestCase):
     def test_invite_code_is_populated(self, mocked_get_new_invite_code):
         mocked_get_new_invite_code.return_value = 'QWE123'
 
-        user = models.User()
-        user.save()
+        user = models.User.objects.create()
 
         user = models.User.objects.get(pk=user.pk)
         self.assertEqual(user.partner_invite_code, 'QWE123')
@@ -20,13 +19,12 @@ class TestUserCreate(TestCase):
 
 class TestUserUpdate(TestCase):
     @mock.patch('sacred_garden.models.get_new_invite_code')
-    def test_invite_code_is_not_updatecd(self, mocked_get_new_invite_code):
+    def test_invite_code_is_not_updated(self, mocked_get_new_invite_code):
         mocked_get_new_invite_code.return_value = 'QWE123'
 
-        user = models.User(partner_invite_code='ALPHA5')
-        user.save()
+        user = models.User.objects.create(first_name='Jon', partner_invite_code='ALPHA5')
 
-        user = models.User.objects.get(pk=user.pk)
+        user.first_name = 'John'
         user.save()
 
         user = models.User.objects.get(pk=user.pk)
@@ -36,11 +34,8 @@ class TestUserUpdate(TestCase):
 class TestConnectPartners(TestCase):
 
     def test_connect_partners(self):
-        user1 = models.User(email='user1@example.com', partner_invite_code='CODE_1')
-        user1.save()
-
-        user2 = models.User(email='user2@example.com', partner_invite_code='CODE_2')
-        user2.save()
+        user1 = models.User.objects.create(email='user1@example.com', partner_invite_code='CODE_1')
+        user2 = models.User.objects.create(email='user2@example.com', partner_invite_code='CODE_2')
 
         models.connect_partners(user1, user2)
 
@@ -57,11 +52,8 @@ class TestConnectPartners(TestCase):
 class TestDisconnectPartners(TestCase):
 
     def test_disconnect_partners(self):
-        user1 = models.User(email='user1@example.com', partner_invite_code='CODE_1')
-        user1.save()
-
-        user2 = models.User(email='user2@example.com', partner_invite_code='CODE_2')
-        user2.save()
+        user1 = models.User.objects.create(email='user1@example.com', partner_invite_code='CODE_1')
+        user2 = models.User.objects.create(email='user2@example.com', partner_invite_code='CODE_2')
 
         models.connect_partners(user1, user2)
         models.disconnect_partners(user1, user2)
