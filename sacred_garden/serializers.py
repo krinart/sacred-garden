@@ -9,7 +9,7 @@ class PartnerSerializer(drf_serializers.ModelSerializer):
         fields = ['id', 'first_name']
 
 
-class HomeSerializer(drf_serializers.ModelSerializer):
+class MeSerializer(drf_serializers.ModelSerializer):
 
     partner_user = PartnerSerializer()
 

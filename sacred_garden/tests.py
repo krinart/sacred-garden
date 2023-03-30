@@ -78,8 +78,11 @@ class ApiTestCase(TestCase):
 
         return client.get(url)
 
-    def assertSuccess(self, actual_response, expected_response=None, expected_status_code=200):
-        self.assertEqual(actual_response.status_code, expected_status_code)
+    def assertSuccess(self, response, expected_data=None, expected_status_code=200):
+        self.assertEqual(response.status_code, expected_status_code)
+
+        if expected_data is not None:
+            self.assertEqual(response.data, expected_data)
 
     def assertUnAuthorized(self, actual_response):
         pass
@@ -104,9 +107,30 @@ class TestUserViewSet(ApiTestCase):
 
     def test_success_without_partner(self):
         response = self.request_get('/api/sacred_garden/v1/users/me/', auth_user=self.user1)
-        self.assertSuccess(response)
+
+        expected_data = {
+            'id': self.user1.id,
+            'first_name': 'John',
+            'partner_user': None,
+            'partner_name': 'Eva_Love',
+            'partner_invite_code': self.user1.partner_invite_code,
+        }
+
+        self.assertSuccess(response, expected_data=expected_data)
 
     def test_success_with_partner(self):
         models.connect_partners(self.user1, self.user2)
         response = self.request_get('/api/sacred_garden/v1/users/me/', auth_user=self.user1)
-        self.assertSuccess(response)
+
+        expected_data = {
+            'id': self.user1.id,
+            'first_name': 'John',
+            'partner_user': {
+                'id': self.user2.id,
+                'first_name': self.user2.first_name,
+            },
+            'partner_name': 'Eva_Love',
+            'partner_invite_code': self.user1.partner_invite_code,
+        }
+
+        self.assertSuccess(response, expected_data=expected_data)

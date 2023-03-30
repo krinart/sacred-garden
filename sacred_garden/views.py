@@ -13,5 +13,5 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
     @action(detail=False, methods=['GET'])
     def me(self, request):
-        serializer = serializers.HomeSerializer(request.user)
+        serializer = serializers.MeSerializer(request.user)
         return Response(serializer.data)
