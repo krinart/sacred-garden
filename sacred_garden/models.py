@@ -35,6 +35,29 @@ class EmotionalNeed(models.Model):
     name = models.CharField(max_length=128)
 
 
+class EmotionalNeedValue(models.Model):
+    emotional_need = models.ForeignKey(EmotionalNeed, on_delete=models.CASCADE)
+    value = models.IntegerField()
+    partner_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    is_current = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+def create_emotional_need_value(user, eneed, value):
+    EmotionalNeedValue.objects.filter(
+        emotional_need=eneed,
+        is_current=True,
+    ).update(
+        is_current=False,
+    )
+
+    return EmotionalNeedValue.objects.create(
+        emotional_need=eneed,
+        value=value,
+        partner_user=user.partner_user,
+    )
+
+
 def get_new_invite_code(k=6):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=k))
 

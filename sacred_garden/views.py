@@ -41,3 +41,9 @@ class EmotionalNeedViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     queryset = models.EmotionalNeed.objects.all()
     serializer_class = serializers.CreateEmotionalNeedSerializer
+
+
+class EmotionalNeedValueViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+
+    queryset = models.EmotionalNeedValue.objects.all()
+    serializer_class = serializers.CreateEmotionalNeedValueSerializer

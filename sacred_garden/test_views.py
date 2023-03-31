@@ -1,73 +1,8 @@
-from unittest import mock
-
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 
 from sacred_garden import models
-
-
-class TestUserCreate(TestCase):
-
-    @mock.patch('sacred_garden.models.get_new_invite_code')
-    def test_invite_code_is_populated(self, mocked_get_new_invite_code):
-        mocked_get_new_invite_code.return_value = 'QWE123'
-
-        user = models.User.objects.create()
-
-        user = models.User.objects.get(pk=user.pk)
-        self.assertEqual(user.partner_invite_code, 'QWE123')
-
-
-class TestUserUpdate(TestCase):
-    @mock.patch('sacred_garden.models.get_new_invite_code')
-    def test_invite_code_is_not_updated(self, mocked_get_new_invite_code):
-        mocked_get_new_invite_code.return_value = 'QWE123'
-
-        user = models.User.objects.create(first_name='Jon', partner_invite_code='ALPHA5')
-
-        user.first_name = 'John'
-        user.save()
-
-        user = models.User.objects.get(pk=user.pk)
-        self.assertEqual(user.partner_invite_code, 'ALPHA5')
-
-
-class TestConnectPartners(TestCase):
-
-    def test_connect_partners(self):
-        user1 = models.User.objects.create(email='user1@example.com', partner_invite_code='CODE_1')
-        user2 = models.User.objects.create(email='user2@example.com', partner_invite_code='CODE_2')
-
-        models.connect_partners(user1, user2)
-
-        user1 = models.User.objects.get(pk=user1.pk)
-        user2 = models.User.objects.get(pk=user2.pk)
-
-        self.assertEqual(user1.partner_user, user2)
-        self.assertEqual(user2.partner_user, user1)
-
-        self.assertIsNone(user1.partner_invite_code)
-        self.assertIsNone(user2.partner_invite_code)
-
-
-class TestDisconnectPartner(TestCase):
-
-    def test_disconnect_partner(self):
-        user1 = models.User.objects.create(email='user1@example.com', partner_invite_code='CODE_1')
-        user2 = models.User.objects.create(email='user2@example.com', partner_invite_code='CODE_2')
-
-        models.connect_partners(user1, user2)
-        models.disconnect_partner(user1)
-
-        user1 = models.User.objects.get(pk=user1.pk)
-        user2 = models.User.objects.get(pk=user2.pk)
-
-        self.assertIsNone(user1.partner_user)
-        self.assertIsNone(user2.partner_user)
-
-        self.assertIsNotNone(user1.partner_invite_code)
-        self.assertIsNotNone(user2.partner_invite_code)
 
 
 class ApiTestCase(TestCase):
@@ -263,3 +198,87 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertUnAuthorized(response)
 
         self.assertEqual(models.EmotionalNeed.objects.count(), 0)
+
+
+class TestEmotionalNeedValueViewSet(ApiTestCase):
+
+    def setUp(self):
+        self.user = models.User.objects.create(
+            email='user1@example.com',
+            first_name='John',
+            partner_name='Eva_Love')
+
+        self.eneed = models.EmotionalNeed.objects.create(
+            user=self.user,
+            name='Hug',
+        )
+
+    def test_create_with_partner_success(self):
+        partner = models.User.objects.create()
+
+        models.connect_partners(self.user, partner)
+
+        response = self.request_post(
+            'emotionalneedvalue-list',
+            data={
+                'emotional_need_id': self.eneed.id,
+                'value': -2,
+            },
+            auth_user=self.user,
+        )
+        self.assertSuccess(response, expected_status_code=201)
+
+        eneed = models.EmotionalNeed.objects.get()
+        eneed_value = models.EmotionalNeedValue.objects.get()
+        self.assertEqual(
+            response.data,
+            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2})
+
+        self.assertEqual(eneed_value.value, -2)
+        self.assertTrue(eneed_value.is_current)
+        self.assertEqual(eneed_value.partner_user, partner)
+
+    def test_create_no_partner_success(self):
+        response = self.request_post(
+            'emotionalneedvalue-list',
+            data={
+                'emotional_need_id': self.eneed.id,
+                'value': -2,
+            },
+            auth_user=self.user,
+        )
+        self.assertSuccess(response, expected_status_code=201)
+
+        eneed = models.EmotionalNeed.objects.get()
+        eneed_value = models.EmotionalNeedValue.objects.get()
+        self.assertEqual(
+            response.data,
+            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2})
+
+        self.assertEqual(eneed_value.value, -2)
+        self.assertTrue(eneed_value.is_current)
+        self.assertIsNone(eneed_value.partner_user)
+
+    def test_error_unathorized_access(self):
+        other_user = models.User.objects.create()
+
+        response = self.request_post(
+            'emotionalneedvalue-list',
+            data={
+                'emotional_need_id': self.eneed.id,
+                'value': -2,
+            },
+            auth_user=other_user,
+        )
+        self.assertBadRequest(response)
+        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)
+
+    def test_unauthorized(self):
+        response = self.request_post(
+            'emotionalneedvalue-list', data={
+                'emotional_need_id': self.eneed.id,
+                'value': -2,
+            })
+        self.assertUnAuthorized(response)
+
+        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)

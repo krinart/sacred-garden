@@ -67,3 +67,24 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
     def validate(self, attrs):
         attrs['user_id'] = self.context['request'].user.id
         return attrs
+
+
+class CreateEmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
+    emotional_need_id = drf_serializers.PrimaryKeyRelatedField(
+        queryset=models.EmotionalNeed.objects.all())
+
+    class Meta:
+        model = models.EmotionalNeedValue
+        fields = ['emotional_need_id', 'value', 'id']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        eneed = attrs.pop('emotional_need_id')
+
+        if not eneed.user == user:
+            raise drf_serializers.ValidationError('Anauthorized access', code='unauthorized')
+
+        attrs['emotional_need'] = eneed
+        attrs['partner_user'] = user.partner_user
+        return attrs
