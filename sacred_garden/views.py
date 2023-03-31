@@ -15,3 +15,10 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     def me(self, request):
         serializer = serializers.MeSerializer(request.user)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['POST'])
+    def connect_partner(self, request):
+        serializer = serializers.ConnectPartnerSerializer(instance=request.user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({})

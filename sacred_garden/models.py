@@ -14,9 +14,9 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
 
-    partner_user = models.OneToOneField('self', models.CASCADE, blank=True, null=True)
+    partner_user = models.ForeignKey('self', models.CASCADE, blank=True, null=True)
     partner_name = models.CharField(max_length=50, blank=True, null=True)
-    partner_invite_code = models.CharField(max_length=50, blank=True, null=True)
+    partner_invite_code = models.CharField(max_length=50, blank=True, null=True, unique=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -35,7 +35,7 @@ def get_new_invite_code(k=6):
 
 
 @receiver(pre_save, sender=User)
-def populate_partner_invite_code_for_new_user(sender, instance, update_fields, **kwargs):
+def populate_partner_invite_code_for_new_user(instance, **kwargs):
 
     # When user is being created (before saving)
     if instance.pk is None:
@@ -45,6 +45,10 @@ def populate_partner_invite_code_for_new_user(sender, instance, update_fields, *
 def initialize_user(user):
     if user.partner_invite_code is None:
         user.populate_partner_invite_code()
+
+
+def get_user_by_partner_invite_code(partner_invite_code):
+    return User.objects.get(partner_invite_code=partner_invite_code)
 
 
 def connect_partners(user1, user2):
