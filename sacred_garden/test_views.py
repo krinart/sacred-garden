@@ -66,6 +66,8 @@ class TestUserViewSet(ApiTestCase):
             'partner_user': None,
             'partner_name': 'Eva_Love',
             'partner_invite_code': self.user1.partner_invite_code,
+            'emotional_needs': [],
+            'partner_emotional_needs': [],
         }
 
         self.assertSuccess(response, expected_data=expected_data)
@@ -83,6 +85,8 @@ class TestUserViewSet(ApiTestCase):
             },
             'partner_name': 'Eva_Love',
             'partner_invite_code': self.user1.partner_invite_code,
+            'emotional_needs': [],
+            'partner_emotional_needs': [],
         }
 
         self.assertSuccess(response, expected_data=expected_data)

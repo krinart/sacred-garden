@@ -3,6 +3,22 @@ from rest_framework import serializers as drf_serializers
 from sacred_garden import models
 
 
+class EmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
+
+    class Meta:
+        model = models.EmotionalNeedValue
+        fields = ['value', 'created_at']
+
+
+class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
+
+    current_value = EmotionalNeedValueSerializer()
+
+    class Meta:
+        model = models.EmotionalNeed
+        fields = ['id', 'name', 'current_value']
+
+
 class PartnerSerializer(drf_serializers.ModelSerializer):
     class Meta:
         model = models.User

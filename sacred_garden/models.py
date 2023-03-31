@@ -7,7 +7,10 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
-from sacred_garden.managers import CustomUserManager
+from sacred_garden import managers
+
+
+PREFETCHED_CURRENT_VALUES_ATTR_NAME = "current_emotionalneedvalue_set"
 
 
 class User(AbstractUser):
@@ -21,7 +24,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    objects = CustomUserManager()
+    objects = managers.UserManager()
 
     def __str__(self):
         return self.email
@@ -36,6 +39,16 @@ class EmotionalNeed(models.Model):
 
     def __str__(self):
         return f'{self.name} ({self.user})'
+
+    @property
+    def current_value(self):
+        if not hasattr(self, PREFETCHED_CURRENT_VALUES_ATTR_NAME):
+            return self.emotionalneedvalue_set.get(is_current=True)
+
+        if self.current_emotionalneedvalue_set:
+            return self.current_emotionalneedvalue_set[0]
+
+        raise EmotionalNeedValue.DoesNotExist
 
 
 class EmotionalNeedValue(models.Model):
@@ -117,3 +130,19 @@ def disconnect_partner(user):
     partner_user.partner_user = None
     partner_user.populate_partner_invite_code()
     partner_user.save()
+
+
+
+def get_emotional_needs_with_prefetched_current_values(user=None):
+    qs = EmotionalNeed.objects.prefetch_related(
+        models.Prefetch(
+            'emotionalneedvalue_set',
+            queryset=EmotionalNeedValue.objects.filter(is_current=True),
+            to_attr=PREFETCHED_CURRENT_VALUES_ATTR_NAME,
+        )
+    )
+
+    if user:
+        qs = qs.filter(user=user)
+
+    return qs
