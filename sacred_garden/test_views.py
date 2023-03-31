@@ -25,6 +25,15 @@ class ApiTestCase(TestCase):
 
         return client.post(url, data=data)
 
+    def request_patch(self, urlname, urlargs=None, auth_user=None, data=None):
+        url = reverse(urlname, args=urlargs)
+
+        client = APIClient()
+        if auth_user:
+            client.force_authenticate(user=auth_user)
+
+        return client.patch(url, data=data)
+
     def assertSuccess(self, response, expected_data=None, expected_status_code=200):
         self.assertEqual(response.status_code, expected_status_code, response.data)
 
@@ -52,6 +61,29 @@ class TestUserViewSet(ApiTestCase):
             first_name='Eva',
             partner_name='John_Love',
             partner_invite_code='USER2_CODE')
+
+    def test_update_user_success(self):
+        response = self.request_patch(
+            'user-detail',
+            urlargs=[self.user1.id],
+            auth_user=self.user1,
+            data={'first_name': 'Jon', 'partner_name': 'Eva'})
+        self.assertSuccess(response)
+
+        updated_user = models.User.objects.get(id=self.user1.id)
+        self.assertEqual(updated_user.first_name, 'Jon')
+        self.assertEqual(updated_user.partner_name, 'Eva')
+
+    def test_update_user_unauthorized(self):
+        response = self.request_patch(
+            'user-detail',
+            urlargs=[self.user1.id],
+            data={'first_name': 'Jon', 'partner_name': 'Eva'})
+        self.assertUnAuthorized(response)
+
+        updated_user = models.User.objects.get(id=self.user1.id)
+        self.assertEqual(updated_user.first_name, 'John')
+        self.assertEqual(updated_user.partner_name, 'Eva_Love')
 
     def test_me_unauthorized(self):
         response = self.request_get('user-me')
