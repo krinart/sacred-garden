@@ -6,6 +6,7 @@ from sacred_garden import views
 
 router = routers.SimpleRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'emotional-needs', views.EmotionalNeedViewSet)
 
 urlpatterns = [
     path('api-token-auth/', obtain_jwt_token),

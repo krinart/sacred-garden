@@ -30,6 +30,11 @@ class User(AbstractUser):
         self.partner_invite_code = get_new_invite_code()
 
 
+class EmotionalNeed(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
+
+
 def get_new_invite_code(k=6):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=k))
 

@@ -239,3 +239,27 @@ class TestUserViewSet(ApiTestCase):
 
         self.assertNoPartner(self.user1)
         self.assertNoPartner(self.user2)
+
+
+class TestEmotionalNeedViewSet(ApiTestCase):
+
+    def setUp(self):
+        self.user = models.User.objects.create(
+            email='user1@example.com',
+            first_name='John',
+            partner_name='Eva_Love')
+
+    def test_create_success(self):
+        response = self.request_post(
+            'emotionalneed-list', data={'name': 'Hug'}, auth_user=self.user)
+        self.assertSuccess(response, expected_status_code=201)
+
+        eneed = models.EmotionalNeed.objects.get()
+        self.assertEqual(response.data, {'name': 'Hug', 'id': eneed.id})
+
+    def test_unauthorized(self):
+        response = self.request_post(
+            'emotionalneed-list', data={'name': 'Hug'})
+        self.assertUnAuthorized(response)
+
+        self.assertEqual(models.EmotionalNeed.objects.count(), 0)

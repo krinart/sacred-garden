@@ -35,3 +35,9 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         models.disconnect_partner(user)
 
         return Response({})
+
+
+class EmotionalNeedViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+
+    queryset = models.EmotionalNeed.objects.all()
+    serializer_class = serializers.CreateEmotionalNeedSerializer

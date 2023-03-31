@@ -55,3 +55,15 @@ class ConnectPartnerSerializer(drf_serializers.Serializer):
     def update(self, instance, validated_data):
         models.connect_partners(instance, validated_data['partner_user'])
         return instance
+
+
+class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
+
+    class Meta:
+        model = models.EmotionalNeed
+        fields = ['name', 'id']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        attrs['user_id'] = self.context['request'].user.id
+        return attrs
