@@ -51,14 +51,14 @@ class TestConnectPartners(TestCase):
         self.assertIsNone(user2.partner_invite_code)
 
 
-class TestDisconnectPartners(TestCase):
+class TestDisconnectPartner(TestCase):
 
-    def test_disconnect_partners(self):
+    def test_disconnect_partner(self):
         user1 = models.User.objects.create(email='user1@example.com', partner_invite_code='CODE_1')
         user2 = models.User.objects.create(email='user2@example.com', partner_invite_code='CODE_2')
 
         models.connect_partners(user1, user2)
-        models.disconnect_partners(user1, user2)
+        models.disconnect_partner(user1)
 
         user1 = models.User.objects.get(pk=user1.pk)
         user2 = models.User.objects.get(pk=user2.pk)
@@ -204,6 +204,36 @@ class TestUserViewSet(ApiTestCase):
         response = self.request_post(
             'user-connect-partner',
             data={'invite_code': 'USER2_CODE'})
+
+        self.assertUnAuthorized(response)
+
+        self.assertNoPartner(self.user1)
+        self.assertNoPartner(self.user2)
+
+    def test_disconnect_partner_success(self):
+        models.connect_partners(self.user1, self.user2)
+
+        response = self.request_post(
+            'user-disconnect-partner',
+            auth_user=self.user1)
+
+        self.assertSuccess(response)
+
+        self.assertNoPartner(self.user1)
+        self.assertNoPartner(self.user2)
+
+    def test_disconnect_partner_error_no_partner(self):
+        response = self.request_post(
+            'user-disconnect-partner',
+            auth_user=self.user1)
+
+        self.assertBadRequest(response)
+
+        self.assertNoPartner(self.user1)
+        self.assertNoPartner(self.user2)
+
+    def test_disconnect_partner_unauthorized(self):
+        response = self.request_post('user-disconnect-partner')
 
         self.assertUnAuthorized(response)
 

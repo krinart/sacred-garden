@@ -61,11 +61,13 @@ def connect_partners(user1, user2):
     user2.save()
 
 
-def disconnect_partners(user1, user2):
-    user1.partner_user = None
-    user1.populate_partner_invite_code()
-    user1.save()
+def disconnect_partner(user):
+    partner_user = user.partner_user
 
-    user2.partner_user = None
-    user2.populate_partner_invite_code()
-    user2.save()
+    user.partner_user = None
+    user.populate_partner_invite_code()
+    user.save()
+
+    partner_user.partner_user = None
+    partner_user.populate_partner_invite_code()
+    partner_user.save()
