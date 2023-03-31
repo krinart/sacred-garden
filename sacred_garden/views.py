@@ -26,7 +26,6 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
     @action(detail=False, methods=['POST'])
     def disconnect_partner(self, request):
-
         user = request.user
         partner_user = request.user.partner_user
 

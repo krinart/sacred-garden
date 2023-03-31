@@ -2,9 +2,9 @@ from unittest import mock
 
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APIRequestFactory, force_authenticate, APIClient
+from rest_framework.test import APIClient
 
-from sacred_garden import models, serializers
+from sacred_garden import models
 
 
 class TestUserCreate(TestCase):
