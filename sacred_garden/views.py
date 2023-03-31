@@ -14,18 +14,25 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
     @action(detail=False, methods=['GET'])
     def me(self, request):
-        emotional_needs = models.get_emotional_needs_with_prefetched_current_values(user=request.user)
+        user = request.user
+        partner_user = user.partner_user
+
+        emotional_needs = models.get_emotional_needs_with_prefetched_current_values(user=user)
         eneeds_serializer = serializers.EmotionalNeedSerializer(
             instance=emotional_needs, many=True)
-
-        partner_emotional_needs = models.get_emotional_needs_with_prefetched_current_values(user=request.user)
-        partner_eneeds_serializer = serializers.EmotionalNeedSerializer(
-            instance=partner_emotional_needs, many=True)
 
         serializer = serializers.MeSerializer(request.user)
         data = serializer.data
         data['emotional_needs'] = eneeds_serializer.data
-        data['partner_emotional_needs'] = partner_eneeds_serializer .data
+
+        if partner_user:
+            partner_emotional_needs = models.get_emotional_needs_with_prefetched_current_values(
+                user=partner_user)
+            partner_eneeds_serializer = serializers.EmotionalNeedSerializer(
+                instance=partner_emotional_needs, many=True)
+            data['partner_emotional_needs'] = partner_eneeds_serializer.data
+        else:
+            data['partner_emotional_needs'] = []
 
         return Response(data)
 
