@@ -83,10 +83,21 @@ def connect_partners(user1, user2):
     user1.partner_user = user2
     user1.partner_invite_code = None
     user1.save()
+    set_current_user_emotional_need_values_to_partner(user1, user2)
 
     user2.partner_user = user1
     user2.partner_invite_code = None
     user2.save()
+    set_current_user_emotional_need_values_to_partner(user2, user1)
+
+
+def set_current_user_emotional_need_values_to_partner(user, partner_user):
+    EmotionalNeedValue.objects.filter(
+        emotional_need__user=user,
+        is_current=True
+    ).update(
+        partner_user=partner_user
+    )
 
 
 def disconnect_partner(user):

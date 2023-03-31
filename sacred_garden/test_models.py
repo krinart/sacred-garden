@@ -108,9 +108,9 @@ class TestCreateEmotionalNeedValue(TestCase):
         self.assertEmotionalNeedValues(self.partner_eneed, [])
 
         models.connect_partners(self.user, self.partner)
-        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (None, -1)])
+        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (self.partner.id, -1)])
         self.assertEmotionalNeedValues(self.partner_eneed, [])
 
         models.create_emotional_need_value(self.user, self.user_eneed, 0)
-        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (None, -1), (self.partner.id, 0)])
+        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (self.partner.id, -1), (self.partner.id, 0)])
         self.assertEmotionalNeedValues(self.partner_eneed, [])
