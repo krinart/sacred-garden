@@ -101,25 +101,25 @@ class TestUserViewSet(ApiTestCase):
     def test_connect_partner_success(self):
         response = self.request_post(
             'user-connect-partner',
-            auth_user=self.user1,
-            data={'invite_code': 'USER2_CODE'})
+            data={'invite_code': 'USER2_CODE'},
+            auth_user=self.user1)
 
         self.assertSuccess(response)
 
         self.assertPartnersConnected(self.user1, self.user2)
 
-    def test_connect_partner_error_invalid_invite_code(self):
+    def test_error_connect_partner_error_invalid_invite_code(self):
         response = self.request_post(
             'user-connect-partner',
-            auth_user=self.user1,
-            data={'invite_code': '123'})
+            data={'invite_code': '123'},
+            auth_user=self.user1)
 
         self.assertBadRequest(response)
 
         self.assertNoPartner(self.user1)
         self.assertNoPartner(self.user2)
 
-    def test_connect_partner_error_partner_already_connected(self):
+    def test_error_connect_partner_error_partner_already_connected(self):
         user3 = models.User.objects.create(
             email='user3@example.com', partner_invite_code='USER3_CODE')
 
@@ -127,15 +127,27 @@ class TestUserViewSet(ApiTestCase):
 
         response = self.request_post(
             'user-connect-partner',
-            auth_user=self.user1,
-            data={'invite_code': 'USER3_CODE'})
+            data={'invite_code': 'USER3_CODE'},
+            auth_user=self.user1)
 
         self.assertBadRequest(response)
 
         self.assertPartnersConnected(self.user1, self.user2)
         self.assertNoPartner(user3)
 
-    def test_connect_partner_unauthorized(self):
+    def test_connect_partner_self(self):
+        response = self.request_post(
+            'user-connect-partner',
+            data={'invite_code': 'USER1_CODE'},
+            auth_user=self.user1,
+        )
+
+        self.assertBadRequest(response)
+
+        self.assertNoPartner(self.user1)
+        self.assertNoPartner(self.user2)
+
+    def test_error_connect_partner_unauthorized(self):
         response = self.request_post(
             'user-connect-partner',
             data={'invite_code': 'USER2_CODE'})
