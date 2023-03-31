@@ -2,13 +2,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from .forms import UserCreationForm, UserChangeForm
-from .models import User
+from sacred_garden import models
 
 
 class UserAdmin(DjangoUserAdmin):
     add_form = UserCreationForm
     form = UserChangeForm
-    model = User
+    model = models.User
     list_display = ("email", "is_staff", "is_active",)
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
@@ -29,4 +29,6 @@ class UserAdmin(DjangoUserAdmin):
     ordering = ("email",)
 
 
-admin.site.register(User, UserAdmin)
+admin.site.register(models.User, UserAdmin)
+admin.site.register(models.EmotionalNeed)
+admin.site.register(models.EmotionalNeedValue)
