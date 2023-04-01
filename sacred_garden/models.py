@@ -52,8 +52,13 @@ class EmotionalNeed(models.Model):
 
 
 class EmotionalNeedValue(models.Model):
+    class ValueChoices(models.IntegerChoices):
+        GOOD = 0
+        BAD = -10
+        PROBLEM = -20
+
     emotional_need = models.ForeignKey(EmotionalNeed, on_delete=models.CASCADE)
-    value = models.IntegerField()
+    value = models.IntegerField(choices=ValueChoices.choices)
     partner_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE,
                                      related_name='partner_emotional_need_values_set')
     is_current = models.BooleanField(default=True)
