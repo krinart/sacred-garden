@@ -62,6 +62,7 @@ class EmotionalNeedValue(models.Model):
     partner_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE,
                                      related_name='partner_emotional_need_values_set')
     is_current = models.BooleanField(default=True)
+    appreciation_text = models.TextField(default="")
     text = models.TextField(default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -69,7 +70,7 @@ class EmotionalNeedValue(models.Model):
         return f'{self.value}: {self.emotional_need.name} ({self.emotional_need.user})'
 
 
-def create_emotional_need_value(user, eneed, value, text=""):
+def create_emotional_need_value(user, eneed, value, text="", appreciation_text=""):
     EmotionalNeedValue.objects.filter(
         emotional_need=eneed,
         is_current=True,
@@ -82,6 +83,7 @@ def create_emotional_need_value(user, eneed, value, text=""):
         value=value,
         partner_user=user.partner_user,
         text=text,
+        appreciation_text=appreciation_text,
     )
 
 

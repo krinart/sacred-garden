@@ -7,7 +7,7 @@ class EmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.EmotionalNeedValue
-        fields = ['value', 'created_at', 'text']
+        fields = ['value', 'created_at', 'text', 'appreciation_text']
 
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
@@ -91,8 +91,12 @@ class CreateEmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.EmotionalNeedValue
-        fields = ['emotional_need_id', 'value', 'id', 'text']
+        fields = ['emotional_need_id', 'value', 'id', 'text', 'appreciation_text']
         read_only_fields = ['id']
+        extra_kwargs = {
+            'text': {'required': True},
+            'appreciation_text': {'required': True},
+        }
 
     def validate(self, attrs):
         user = self.context['request'].user
@@ -109,4 +113,5 @@ class CreateEmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
             validated_data['emotional_need_id'],
             validated_data['value'],
             validated_data['text'],
+            validated_data['appreciation_text'],
         )

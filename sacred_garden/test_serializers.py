@@ -30,13 +30,13 @@ class TestTest(TestCase):
             eneed1_data = {
                 'id': eneed1.id,
                 'name': 'Hug',
-                'current_value': {'value': 2, 'text': ''}
+                'current_value': {'value': 2, 'text': '', 'appreciation_text': ''}
             }
             self.assertDictEqual(data[0], eneed1_data)
 
             eneed2_data = {
                 'id': eneed2.id,
                 'name': 'Kiss',
-                'current_value': {'value': 4, 'text': ''}
+                'current_value': {'value': 4, 'text': '', 'appreciation_text': ''}
             }
             self.assertDictEqual(data[1], eneed2_data)
