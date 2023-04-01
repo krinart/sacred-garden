@@ -3,7 +3,7 @@ import string
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
@@ -82,8 +82,13 @@ def get_new_invite_code(k=6):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=k))
 
 
+@receiver(post_save, sender=EmotionalNeed)
+def post_save_emotional_need(instance, created, **kwargs):
+    if created:
+        create_emotional_need_value(instance.user, instance, 0)
+
 @receiver(pre_save, sender=User)
-def populate_partner_invite_code_for_new_user(instance, **kwargs):
+def pre_save_user(instance, **kwargs):
 
     # When user is being created (before saving)
     if instance.pk is None:

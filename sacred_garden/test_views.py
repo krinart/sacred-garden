@@ -276,7 +276,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         self.assertSuccess(response, expected_status_code=201)
 
         eneed = models.EmotionalNeed.objects.get()
-        eneed_value = models.EmotionalNeedValue.objects.get()
+        eneed_value = models.EmotionalNeedValue.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2})
@@ -297,7 +297,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         self.assertSuccess(response, expected_status_code=201)
 
         eneed = models.EmotionalNeed.objects.get()
-        eneed_value = models.EmotionalNeedValue.objects.get()
+        eneed_value = models.EmotionalNeedValue.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2})
@@ -318,7 +318,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             auth_user=other_user,
         )
         self.assertBadRequest(response)
-        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)
+        self.assertEqual(models.EmotionalNeedValue.objects.count(), 1)
 
     def test_unauthorized(self):
         response = self.request_post(
@@ -328,4 +328,4 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             })
         self.assertUnAuthorized(response)
 
-        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)
+        self.assertEqual(models.EmotionalNeedValue.objects.count(), 1)
