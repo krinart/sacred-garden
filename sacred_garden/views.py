@@ -30,9 +30,7 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
                 user=partner_user)
             partner_eneeds_serializer = serializers.EmotionalNeedSerializer(
                 instance=partner_emotional_needs, many=True)
-            data['partner_emotional_needs'] = partner_eneeds_serializer.data
-        else:
-            data['partner_emotional_needs'] = []
+            data['partner_user']['emotional_needs'] = partner_eneeds_serializer.data
 
         return Response(data)
 
