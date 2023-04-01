@@ -270,6 +270,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             data={
                 'emotional_need_id': self.eneed.id,
                 'value': -2,
+                'text': 'Please help'
             },
             auth_user=self.user,
         )
@@ -279,7 +280,8 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         eneed_value = models.EmotionalNeedValue.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
-            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2})
+            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2,
+             'text': 'Please help'})
 
         self.assertEqual(eneed_value.value, -2)
         self.assertTrue(eneed_value.is_current)
@@ -291,6 +293,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             data={
                 'emotional_need_id': self.eneed.id,
                 'value': -2,
+                'text': 'Please help',
             },
             auth_user=self.user,
         )
@@ -300,7 +303,8 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         eneed_value = models.EmotionalNeedValue.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
-            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2})
+            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -2,
+             'text': 'Please help'})
 
         self.assertEqual(eneed_value.value, -2)
         self.assertTrue(eneed_value.is_current)
@@ -314,6 +318,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             data={
                 'emotional_need_id': self.eneed.id,
                 'value': -2,
+                'text': 'Please help',
             },
             auth_user=other_user,
         )
@@ -325,6 +330,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             'emotionalneedvalue-list', data={
                 'emotional_need_id': self.eneed.id,
                 'value': -2,
+                'text': 'Please help'
             })
         self.assertUnAuthorized(response)
 
