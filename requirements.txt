@@ -1,0 +1,8 @@
+Django==4.1.7
+django-cors-headers==3.14.0
+django-rest-framework==0.1.0
+djangorestframework==3.14.0
+djangorestframework-jwt==1.11.0
+ipdb==0.13.13
+ipython==8.11.0
+pytz==2022.7.1
