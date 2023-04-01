@@ -7,7 +7,7 @@ class EmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.EmotionalNeedValue
-        fields = ['value', 'created_at']
+        fields = ['value', 'created_at', 'text']
 
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
