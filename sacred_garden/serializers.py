@@ -4,10 +4,37 @@ from sacred_garden import models
 
 
 class EmotionalNeedStatusSerializer(drf_serializers.ModelSerializer):
+    emotional_need_id = drf_serializers.PrimaryKeyRelatedField(
+        queryset=models.EmotionalNeed.objects.all())
 
     class Meta:
         model = models.EmotionalNeedStatus
-        fields = ['status', 'trend', 'created_at', 'text', 'appreciation_text']
+        fields = ['emotional_need_id', 'status', 'trend', 'id', 'text', 'appreciation_text',
+                  'created_at']
+        read_only_fields = ['id']
+        extra_kwargs = {
+            'text': {'required': True},
+            'appreciation_text': {'required': True},
+        }
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        eneed = attrs['emotional_need_id']
+
+        if not eneed.user == user:
+            raise drf_serializers.ValidationError('Anauthorized access', code='unauthorized')
+
+        return attrs
+
+    def create(self, validated_data):
+        return models.create_emotional_need_value(
+            self.context['request'].user,
+            validated_data['emotional_need_id'],
+            validated_data['status'],
+            validated_data['trend'],
+            validated_data['text'],
+            validated_data['appreciation_text'],
+        )
 
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
@@ -83,37 +110,3 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
     def validate(self, attrs):
         attrs['user_id'] = self.context['request'].user.id
         return attrs
-
-
-class CreateEmotionalNeedStatusSerializer(drf_serializers.ModelSerializer):
-    emotional_need_id = drf_serializers.PrimaryKeyRelatedField(
-        queryset=models.EmotionalNeed.objects.all())
-
-    class Meta:
-        model = models.EmotionalNeedStatus
-        fields = ['emotional_need_id', 'status', 'trend', 'id', 'text', 'appreciation_text',
-                  'created_at']
-        read_only_fields = ['id']
-        extra_kwargs = {
-            'text': {'required': True},
-            'appreciation_text': {'required': True},
-        }
-
-    def validate(self, attrs):
-        user = self.context['request'].user
-        eneed = attrs['emotional_need_id']
-
-        if not eneed.user == user:
-            raise drf_serializers.ValidationError('Anauthorized access', code='unauthorized')
-
-        return attrs
-
-    def create(self, validated_data):
-        return models.create_emotional_need_value(
-            self.context['request'].user,
-            validated_data['emotional_need_id'],
-            validated_data['status'],
-            validated_data['trend'],
-            validated_data['text'],
-            validated_data['appreciation_text'],
-        )
