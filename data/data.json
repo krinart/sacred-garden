@@ -75,20 +75,6 @@
     "model": "sacred_garden.emotionalneedstatus",
     "pk": 1,
     "fields": {
-      "emotional_need": 1,
-      "status": 0,
-      "trend": -1,
-      "partner_user": 2,
-      "is_current": true,
-      "appreciation_text": "Love",
-      "text": "Help",
-      "created_at": "2023-04-02T04:40:59.987Z"
-    }
-  },
-  {
-    "model": "sacred_garden.emotionalneedstatus",
-    "pk": 2,
-    "fields": {
       "emotional_need": 2,
       "status": -20,
       "trend": 0,
@@ -101,7 +87,7 @@
   },
   {
     "model": "sacred_garden.emotionalneedstatus",
-    "pk": 3,
+    "pk": 2,
     "fields": {
       "emotional_need": 4,
       "status": -10,
@@ -112,5 +98,120 @@
       "text": "Help!",
       "created_at": "2023-04-02T06:45:24.943Z"
     }
+  },
+
+
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 3,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": 0,
+      "partner_user": 2,
+      "is_current": false,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 4,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": 1,
+      "partner_user": 2,
+      "is_current": false,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 5,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": 1,
+      "partner_user": 2,
+      "is_current": false,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 5,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": 0,
+      "partner_user": 2,
+      "is_current": false,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 6,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": 1,
+      "partner_user": 2,
+      "is_current": false,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 7,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": -1,
+      "partner_user": 2,
+      "is_current": false,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 8,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": 1,
+      "partner_user": 2,
+      "is_current": false,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneedstatus",
+    "pk": 9,
+    "fields": {
+      "emotional_need": 1,
+      "status": -10,
+      "trend": 0,
+      "partner_user": 2,
+      "is_current": true,
+      "appreciation_text": "Love",
+      "text": "Help",
+      "created_at": "2023-04-02T04:40:59.987Z"
+    }
   }
+
 ]
