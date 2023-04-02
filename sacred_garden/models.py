@@ -73,7 +73,7 @@ class EmotionalNeedStatus(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.value}: {self.emotional_need.name} ({self.emotional_need.user})'
+        return f'{self.status}: {self.emotional_need.name} ({self.emotional_need.user})'
 
 
 def create_emotional_need_value(user, eneed, status, trend, text, appreciation_text):
