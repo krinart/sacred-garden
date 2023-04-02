@@ -167,3 +167,24 @@ def get_emotional_needs_with_prefetched_current_values(user=None):
         qs = qs.filter(user=user)
 
     return qs
+
+
+def find_emotional_need_statuses(eneed, user=None, partner_user=None):
+    assert user or partner_user, "Either user or partner_user should ne specified"
+
+    qs = EmotionalNeedStatus.objects.filter(
+        emotional_need=eneed,
+    )
+
+    if user:
+        qs = qs.filter(
+            emotional_need__user=user,
+        )
+    else:
+        qs = qs.filter(
+            partner_user=partner_user,
+        )
+
+    qs = qs.order_by('created_at')
+
+    return qs

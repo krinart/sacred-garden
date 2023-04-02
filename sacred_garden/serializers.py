@@ -91,7 +91,8 @@ class CreateEmotionalNeedStatusSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.EmotionalNeedStatus
-        fields = ['emotional_need_id', 'status', 'trend', 'id', 'text', 'appreciation_text']
+        fields = ['emotional_need_id', 'status', 'trend', 'id', 'text', 'appreciation_text',
+                  'created_at']
         read_only_fields = ['id']
         extra_kwargs = {
             'text': {'required': True},
