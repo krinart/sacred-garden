@@ -247,7 +247,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(models.EmotionalNeed.objects.count(), 0)
 
 
-class TestEmotionalNeedValueViewSet(ApiTestCase):
+class TestEmotionalNeedStatusViewSet(ApiTestCase):
 
     def setUp(self):
         self.user = models.User.objects.create(
@@ -266,10 +266,10 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         models.connect_partners(self.user, partner)
 
         response = self.request_post(
-            'emotionalneedvalue-list',
+            'emotionalneedstatus-list',
             data={
                 'emotional_need_id': self.eneed.id,
-                'value': -20,
+                'status': -20,
                 'trend': 1,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
@@ -279,23 +279,23 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         self.assertSuccess(response, expected_status_code=201)
 
         eneed = models.EmotionalNeed.objects.get()
-        eneed_value = models.EmotionalNeedValue.objects.get(id=response.data['id'])
+        eneed_status = models.EmotionalNeedStatus.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
-            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -20,
+            {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
              'text': 'Please help', 'appreciation_text': 'I love you',
              'trend': 1})
 
-        self.assertEqual(eneed_value.value, -20)
-        self.assertTrue(eneed_value.is_current)
-        self.assertEqual(eneed_value.partner_user, partner)
+        self.assertEqual(eneed_status.status, -20)
+        self.assertTrue(eneed_status.is_current)
+        self.assertEqual(eneed_status.partner_user, partner)
 
     def test_create_no_partner_success(self):
         response = self.request_post(
-            'emotionalneedvalue-list',
+            'emotionalneedstatus-list',
             data={
                 'emotional_need_id': self.eneed.id,
-                'value': -20,
+                'status': -20,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
                 'trend': 1,
@@ -305,25 +305,25 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         self.assertSuccess(response, expected_status_code=201)
 
         eneed = models.EmotionalNeed.objects.get()
-        eneed_value = models.EmotionalNeedValue.objects.get(id=response.data['id'])
+        eneed_status = models.EmotionalNeedStatus.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
-            {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -20,
+            {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
              'text': 'Please help', 'appreciation_text': 'I love you',
              'trend': 1})
 
-        self.assertEqual(eneed_value.value, -20)
-        self.assertTrue(eneed_value.is_current)
-        self.assertIsNone(eneed_value.partner_user)
+        self.assertEqual(eneed_status.status, -20)
+        self.assertTrue(eneed_status.is_current)
+        self.assertIsNone(eneed_status.partner_user)
 
     def test_error_unathorized_access(self):
         other_user = models.User.objects.create()
 
         response = self.request_post(
-            'emotionalneedvalue-list',
+            'emotionalneedstatus-list',
             data={
                 'emotional_need_id': self.eneed.id,
-                'value': -2,
+                'status': -2,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
                 'trend': 1,
@@ -331,15 +331,15 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             auth_user=other_user,
         )
         self.assertBadRequest(response)
-        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)
+        self.assertEqual(models.EmotionalNeedStatus.objects.count(), 0)
 
     def test_unauthorized(self):
         response = self.request_post(
-            'emotionalneedvalue-list', data={
+            'emotionalneedstatus-list', data={
                 'emotional_need_id': self.eneed.id,
-                'value': -2,
+                'status': -2,
                 'text': 'Please help'
             })
         self.assertUnAuthorized(response)
 
-        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)
+        self.assertEqual(models.EmotionalNeedStatus.objects.count(), 0)

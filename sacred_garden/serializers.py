@@ -3,20 +3,20 @@ from rest_framework import serializers as drf_serializers
 from sacred_garden import models
 
 
-class EmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
+class EmotionalNeedStatusSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
-        model = models.EmotionalNeedValue
-        fields = ['value', 'trend', 'created_at', 'text', 'appreciation_text']
+        model = models.EmotionalNeedStatus
+        fields = ['status', 'trend', 'created_at', 'text', 'appreciation_text']
 
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
-    current_value = EmotionalNeedValueSerializer()
+    current_status = EmotionalNeedStatusSerializer()
 
     class Meta:
         model = models.EmotionalNeed
-        fields = ['id', 'name', 'current_value']
+        fields = ['id', 'name', 'current_status']
 
 
 class PartnerSerializer(drf_serializers.ModelSerializer):
@@ -85,13 +85,13 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
         return attrs
 
 
-class CreateEmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
+class CreateEmotionalNeedStatusSerializer(drf_serializers.ModelSerializer):
     emotional_need_id = drf_serializers.PrimaryKeyRelatedField(
         queryset=models.EmotionalNeed.objects.all())
 
     class Meta:
-        model = models.EmotionalNeedValue
-        fields = ['emotional_need_id', 'value', 'trend', 'id', 'text', 'appreciation_text']
+        model = models.EmotionalNeedStatus
+        fields = ['emotional_need_id', 'status', 'trend', 'id', 'text', 'appreciation_text']
         read_only_fields = ['id']
         extra_kwargs = {
             'text': {'required': True},
@@ -111,7 +111,7 @@ class CreateEmotionalNeedValueSerializer(drf_serializers.ModelSerializer):
         return models.create_emotional_need_value(
             self.context['request'].user,
             validated_data['emotional_need_id'],
-            validated_data['value'],
+            validated_data['status'],
             validated_data['trend'],
             validated_data['text'],
             validated_data['appreciation_text'],

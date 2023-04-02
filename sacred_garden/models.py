@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from sacred_garden import managers
 
 
-PREFETCHED_CURRENT_VALUES_ATTR_NAME = "current_emotionalneedvalue_set"
+PREFETCHED_CURRENT_VALUES_ATTR_NAME = "current_emotionalneedstatus_set"
 
 
 class User(AbstractUser):
@@ -41,18 +41,18 @@ class EmotionalNeed(models.Model):
         return f'{self.name} ({self.user})'
 
     @property
-    def current_value(self):
+    def current_status(self):
         if not hasattr(self, PREFETCHED_CURRENT_VALUES_ATTR_NAME):
-            return self.emotionalneedvalue_set.get(is_current=True)
+            return self.emotionalneedstatus_set.get(is_current=True)
 
-        if self.current_emotionalneedvalue_set:
-            return self.current_emotionalneedvalue_set[0]
+        if self.current_emotionalneedstatus_set:
+            return self.current_emotionalneedstatus_set[0]
 
-        raise EmotionalNeedValue.DoesNotExist
+        raise EmotionalNeedStatus.DoesNotExist
 
 
-class EmotionalNeedValue(models.Model):
-    class ValueChoices(models.IntegerChoices):
+class EmotionalNeedStatus(models.Model):
+    class StatusChoices(models.IntegerChoices):
         GOOD = 0
         BAD = -10
         PROBLEM = -20
@@ -63,7 +63,7 @@ class EmotionalNeedValue(models.Model):
         POSITIVE = 1
 
     emotional_need = models.ForeignKey(EmotionalNeed, on_delete=models.CASCADE)
-    value = models.IntegerField(choices=ValueChoices.choices)
+    status = models.IntegerField(choices=StatusChoices.choices)
     trend = models.IntegerField(choices=TrendChoices.choices)
     partner_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE,
                                      related_name='partner_emotional_need_values_set')
@@ -76,17 +76,17 @@ class EmotionalNeedValue(models.Model):
         return f'{self.value}: {self.emotional_need.name} ({self.emotional_need.user})'
 
 
-def create_emotional_need_value(user, eneed, value, trend, text, appreciation_text):
-    EmotionalNeedValue.objects.filter(
+def create_emotional_need_value(user, eneed, status, trend, text, appreciation_text):
+    EmotionalNeedStatus.objects.filter(
         emotional_need=eneed,
         is_current=True,
     ).update(
         is_current=False,
     )
 
-    return EmotionalNeedValue.objects.create(
+    return EmotionalNeedStatus.objects.create(
         emotional_need=eneed,
-        value=value,
+        status=status,
         trend=trend,
         partner_user=user.partner_user,
         text=text,
@@ -133,7 +133,7 @@ def connect_partners(user1, user2):
 
 
 def set_current_user_emotional_need_values_to_partner(user, partner_user):
-    EmotionalNeedValue.objects.filter(
+    EmotionalNeedStatus.objects.filter(
         emotional_need__user=user,
         is_current=True
     ).update(
@@ -157,8 +157,8 @@ def disconnect_partner(user):
 def get_emotional_needs_with_prefetched_current_values(user=None):
     qs = EmotionalNeed.objects.prefetch_related(
         models.Prefetch(
-            'emotionalneedvalue_set',
-            queryset=EmotionalNeedValue.objects.filter(is_current=True),
+            'emotionalneedstatus_set',
+            queryset=EmotionalNeedStatus.objects.filter(is_current=True),
             to_attr=PREFETCHED_CURRENT_VALUES_ATTR_NAME,
         )
     )

@@ -68,7 +68,7 @@ class TestDisconnectPartner(TestCase):
         self.assertIsNotNone(user2.partner_invite_code)
 
 
-class TestCreateEmotionalNeedValue(TestCase):
+class TestCreateEmotionalNeedStatus(TestCase):
 
     def setUp(self):
         self.user = models.User.objects.create(email='user@example.com')
@@ -77,18 +77,18 @@ class TestCreateEmotionalNeedValue(TestCase):
         self.partner_eneed = models.EmotionalNeed.objects.create(user=self.partner, name='Lies')
 
     def assertEmotionalNeedValues(self, eneed, expected_values):
-        actual_values = models.EmotionalNeedValue.objects.filter(
+        actual_values = models.EmotionalNeedStatus.objects.filter(
             emotional_need=eneed
         ).order_by('created_at')
 
         n = actual_values.count()
         self.assertEqual(n, len(expected_values))
 
-        values_list = actual_values.values_list('partner_user', 'value', 'is_current')
+        values_list = actual_values.values_list('partner_user', 'status', 'is_current')
 
-        for i, ((apartner, avalue, is_current), (epartner, evalue)) in enumerate(zip(values_list, expected_values)):
+        for i, ((apartner, astatus, is_current), (epartner, estatus)) in enumerate(zip(values_list, expected_values)):
             self.assertEqual(epartner, apartner)
-            self.assertEqual(evalue, avalue)
+            self.assertEqual(estatus, astatus)
 
             if i == n-1:
                 self.assertTrue(is_current)

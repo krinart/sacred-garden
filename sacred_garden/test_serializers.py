@@ -24,19 +24,19 @@ class TestTest(TestCase):
 
             self.assertEqual(len(data), 2)
 
-            del data[0]['current_value']['created_at']
-            del data[1]['current_value']['created_at']
+            del data[0]['current_status']['created_at']
+            del data[1]['current_status']['created_at']
 
             eneed1_data = {
                 'id': eneed1.id,
                 'name': 'Hug',
-                'current_value': {'value': 2, 'text': '', 'appreciation_text': '', 'trend': 1}
+                'current_status': {'status': 2, 'text': '', 'appreciation_text': '', 'trend': 1}
             }
             self.assertDictEqual(data[0], eneed1_data)
 
             eneed2_data = {
                 'id': eneed2.id,
                 'name': 'Kiss',
-                'current_value': {'value': 4, 'text': '', 'appreciation_text': '', 'trend': 1}
+                'current_status': {'status': 4, 'text': '', 'appreciation_text': '', 'trend': 1}
             }
             self.assertDictEqual(data[1], eneed2_data)
