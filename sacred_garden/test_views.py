@@ -270,6 +270,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             data={
                 'emotional_need_id': self.eneed.id,
                 'value': -20,
+                'trend': 1,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
             },
@@ -282,7 +283,8 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         self.assertEqual(
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -20,
-             'text': 'Please help', 'appreciation_text': 'I love you'})
+             'text': 'Please help', 'appreciation_text': 'I love you',
+             'trend': 1})
 
         self.assertEqual(eneed_value.value, -20)
         self.assertTrue(eneed_value.is_current)
@@ -296,6 +298,7 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
                 'value': -20,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
+                'trend': 1,
             },
             auth_user=self.user,
         )
@@ -306,7 +309,8 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
         self.assertEqual(
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_value.id, 'value': -20,
-             'text': 'Please help', 'appreciation_text': 'I love you'})
+             'text': 'Please help', 'appreciation_text': 'I love you',
+             'trend': 1})
 
         self.assertEqual(eneed_value.value, -20)
         self.assertTrue(eneed_value.is_current)
@@ -321,11 +325,13 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
                 'emotional_need_id': self.eneed.id,
                 'value': -2,
                 'text': 'Please help',
+                'appreciation_text': 'I love you',
+                'trend': 1,
             },
             auth_user=other_user,
         )
         self.assertBadRequest(response)
-        self.assertEqual(models.EmotionalNeedValue.objects.count(), 1)
+        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)
 
     def test_unauthorized(self):
         response = self.request_post(
@@ -336,4 +342,4 @@ class TestEmotionalNeedValueViewSet(ApiTestCase):
             })
         self.assertUnAuthorized(response)
 
-        self.assertEqual(models.EmotionalNeedValue.objects.count(), 1)
+        self.assertEqual(models.EmotionalNeedValue.objects.count(), 0)

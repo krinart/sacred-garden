@@ -57,20 +57,26 @@ class EmotionalNeedValue(models.Model):
         BAD = -10
         PROBLEM = -20
 
+    class TrendChoices(models.IntegerChoices):
+        NEGATIVE = -1
+        NEUTRAL = 0
+        POSITIVE = 1
+
     emotional_need = models.ForeignKey(EmotionalNeed, on_delete=models.CASCADE)
     value = models.IntegerField(choices=ValueChoices.choices)
+    trend = models.IntegerField(choices=TrendChoices.choices)
     partner_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE,
                                      related_name='partner_emotional_need_values_set')
     is_current = models.BooleanField(default=True)
-    appreciation_text = models.TextField(default="")
-    text = models.TextField(default="")
+    appreciation_text = models.TextField()
+    text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.value}: {self.emotional_need.name} ({self.emotional_need.user})'
 
 
-def create_emotional_need_value(user, eneed, value, text="", appreciation_text=""):
+def create_emotional_need_value(user, eneed, value, trend, text, appreciation_text):
     EmotionalNeedValue.objects.filter(
         emotional_need=eneed,
         is_current=True,
@@ -81,6 +87,7 @@ def create_emotional_need_value(user, eneed, value, text="", appreciation_text="
     return EmotionalNeedValue.objects.create(
         emotional_need=eneed,
         value=value,
+        trend=trend,
         partner_user=user.partner_user,
         text=text,
         appreciation_text=appreciation_text,
@@ -91,10 +98,10 @@ def get_new_invite_code(k=6):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=k))
 
 
-@receiver(post_save, sender=EmotionalNeed)
-def post_save_emotional_need(instance, created, **kwargs):
-    if created:
-        create_emotional_need_value(instance.user, instance, 0)
+# @receiver(post_save, sender=EmotionalNeed)
+# def post_save_emotional_need(instance, created, **kwargs):
+#     if created:
+#         create_emotional_need_value(instance.user, instance, 0)
 
 @receiver(pre_save, sender=User)
 def pre_save_user(instance, **kwargs):

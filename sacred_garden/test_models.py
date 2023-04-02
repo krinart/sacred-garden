@@ -96,21 +96,21 @@ class TestCreateEmotionalNeedValue(TestCase):
                 self.assertFalse(is_current)
 
     def test_simple(self):
-        self.assertEmotionalNeedValues(self.user_eneed, [(None, 0)])
-        self.assertEmotionalNeedValues(self.partner_eneed, [(None, 0)])
+        self.assertEmotionalNeedValues(self.user_eneed, [])
+        self.assertEmotionalNeedValues(self.partner_eneed, [])
 
-        models.create_emotional_need_value(self.user, self.user_eneed, -2)
-        self.assertEmotionalNeedValues(self.user_eneed, [(None, 0), (None, -2)])
-        self.assertEmotionalNeedValues(self.partner_eneed, [(None, 0)])
+        models.create_emotional_need_value(self.user, self.user_eneed, -2, 0, "", "")
+        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2)])
+        self.assertEmotionalNeedValues(self.partner_eneed, [])
 
-        models.create_emotional_need_value(self.user, self.user_eneed, -1)
-        self.assertEmotionalNeedValues(self.user_eneed, [(None, 0), (None, -2), (None, -1)])
-        self.assertEmotionalNeedValues(self.partner_eneed, [(None, 0)])
+        models.create_emotional_need_value(self.user, self.user_eneed, -1, 0, "", "")
+        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (None, -1)])
+        self.assertEmotionalNeedValues(self.partner_eneed, [])
 
         models.connect_partners(self.user, self.partner)
-        self.assertEmotionalNeedValues(self.user_eneed, [(None, 0), (None, -2), (self.partner.id, -1)])
-        self.assertEmotionalNeedValues(self.partner_eneed, [(self.user.id, 0)])
+        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (self.partner.id, -1)])
+        self.assertEmotionalNeedValues(self.partner_eneed, [])
 
-        models.create_emotional_need_value(self.user, self.user_eneed, 0)
-        self.assertEmotionalNeedValues(self.user_eneed, [(None, 0), (None, -2), (self.partner.id, -1), (self.partner.id, 0)])
-        self.assertEmotionalNeedValues(self.partner_eneed, [(self.user.id, 0)])
+        models.create_emotional_need_value(self.user, self.user_eneed, 0, 0, "", "")
+        self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (self.partner.id, -1), (self.partner.id, 0)])
+        self.assertEmotionalNeedValues(self.partner_eneed, [])
