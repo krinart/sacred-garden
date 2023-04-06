@@ -62,14 +62,16 @@ class EmotionalNeedState(models.Model):
         BAD = -10
         PROBLEM = -20
 
-    class TrendChoices(models.IntegerChoices):
+    class ValueRelativeChoices(models.IntegerChoices):
         NEGATIVE = -1
         NEUTRAL = 0
         POSITIVE = 1
 
     emotional_need = models.ForeignKey(EmotionalNeed, on_delete=models.CASCADE)
     status = models.IntegerField(choices=StatusChoices.choices)
-    trend = models.IntegerField(choices=TrendChoices.choices)
+    value_type = models.IntegerField(choices=EmotionalNeed.StateValueType.choices)
+    value_abs = models.IntegerField(blank=True, null=True)
+    value_rel = models.IntegerField(choices=ValueRelativeChoices.choices, blank=True, null=True)
     partner_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE,
                                      related_name='partner_emotional_need_values_set')
     is_current = models.BooleanField(default=True)
@@ -81,7 +83,7 @@ class EmotionalNeedState(models.Model):
         return f'{self.status}: {self.emotional_need.name} ({self.emotional_need.user})'
 
 
-def create_emotional_need_state(user, eneed, status, trend, text, appreciation_text):
+def create_emotional_need_state(user, eneed, status, value_abs, value_rel, text, appreciation_text):
     EmotionalNeedState.objects.filter(
         emotional_need=eneed,
         is_current=True,
@@ -92,7 +94,9 @@ def create_emotional_need_state(user, eneed, status, trend, text, appreciation_t
     return EmotionalNeedState.objects.create(
         emotional_need=eneed,
         status=status,
-        trend=trend,
+        value_type=eneed.state_value_type,
+        value_abs=value_abs,
+        value_rel=value_rel,
         partner_user=user.partner_user,
         text=text,
         appreciation_text=appreciation_text,

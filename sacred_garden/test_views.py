@@ -250,10 +250,10 @@ class TestEmotionalNeedViewSet(ApiTestCase):
     def test_history_self_success(self):
         eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
 
-        ens1 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
-        ens2 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
+        ens1 = models.create_emotional_need_state(self.user, eneed, -1, None, 0, "", "")
+        ens2 = models.create_emotional_need_state(self.user, eneed, -1, None, 0, "", "")
         models.connect_partners(self.user, self.partner)
-        ens3 = models.create_emotional_need_state(self.user, eneed, 1, 0, "", "")
+        ens3 = models.create_emotional_need_state(self.user, eneed, 1, None, 0, "", "")
 
         response = self.request_get(
             'emotionalneed-state-history', urlargs=[eneed.id], auth_user=self.user)
@@ -267,10 +267,10 @@ class TestEmotionalNeedViewSet(ApiTestCase):
     def test_history_partner_success(self):
         eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
 
-        ens1 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
-        ens2 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
+        ens1 = models.create_emotional_need_state(self.user, eneed, -1, 1, 0, "", "")
+        ens2 = models.create_emotional_need_state(self.user, eneed, -1, 1, 0, "", "")
         models.connect_partners(self.user, self.partner)
-        ens3 = models.create_emotional_need_state(self.user, eneed, 1, 0, "", "")
+        ens3 = models.create_emotional_need_state(self.user, eneed, 1, 0, 0, "", "")
 
         response = self.request_get(
             'emotionalneed-state-history', urlargs=[eneed.id], auth_user=self.partner)
@@ -305,7 +305,7 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
             data={
                 'emotional_need_id': self.eneed.id,
                 'status': -20,
-                'trend': 1,
+                'value_rel': 1,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
             },
@@ -320,7 +320,7 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
              'text': 'Please help', 'appreciation_text': 'I love you',
-             'trend': 1})
+             'value_rel': 1, 'value_abs': None})
 
         self.assertEqual(eneed_status.status, -20)
         self.assertTrue(eneed_status.is_current)
@@ -334,7 +334,7 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
                 'status': -20,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
-                'trend': 1,
+                'value_rel': 1,
             },
             auth_user=self.user,
         )
@@ -347,7 +347,7 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
              'text': 'Please help', 'appreciation_text': 'I love you',
-             'trend': 1})
+             'value_rel': 1, 'value_abs': None})
 
         self.assertEqual(eneed_status.status, -20)
         self.assertTrue(eneed_status.is_current)
