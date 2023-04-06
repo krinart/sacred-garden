@@ -99,11 +99,11 @@ class TestCreateEmotionalNeedState(TestCase):
         self.assertEmotionalNeedValues(self.user_eneed, [])
         self.assertEmotionalNeedValues(self.partner_eneed, [])
 
-        models.create_emotional_need_value(self.user, self.user_eneed, -2, 0, "", "")
+        models.create_emotional_need_state(self.user, self.user_eneed, -2, 0, "", "")
         self.assertEmotionalNeedValues(self.user_eneed, [(None, -2)])
         self.assertEmotionalNeedValues(self.partner_eneed, [])
 
-        models.create_emotional_need_value(self.user, self.user_eneed, -1, 0, "", "")
+        models.create_emotional_need_state(self.user, self.user_eneed, -1, 0, "", "")
         self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (None, -1)])
         self.assertEmotionalNeedValues(self.partner_eneed, [])
 
@@ -111,6 +111,6 @@ class TestCreateEmotionalNeedState(TestCase):
         self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (self.partner.id, -1)])
         self.assertEmotionalNeedValues(self.partner_eneed, [])
 
-        models.create_emotional_need_value(self.user, self.user_eneed, 0, 0, "", "")
+        models.create_emotional_need_state(self.user, self.user_eneed, 0, 0, "", "")
         self.assertEmotionalNeedValues(self.user_eneed, [(None, -2), (self.partner.id, -1), (self.partner.id, 0)])
         self.assertEmotionalNeedValues(self.partner_eneed, [])

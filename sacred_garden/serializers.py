@@ -27,7 +27,7 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        return models.create_emotional_need_value(
+        return models.create_emotional_need_state(
             self.context['request'].user,
             validated_data['emotional_need_id'],
             validated_data['status'],

@@ -250,10 +250,10 @@ class TestEmotionalNeedViewSet(ApiTestCase):
     def test_history_self_success(self):
         eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs')
 
-        ens1 = models.create_emotional_need_value(self.user, eneed, -1, 1, "", "")
-        ens2 = models.create_emotional_need_value(self.user, eneed, -1, 1, "", "")
+        ens1 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
+        ens2 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
         models.connect_partners(self.user, self.partner)
-        ens3 = models.create_emotional_need_value(self.user, eneed, 1, 0, "", "")
+        ens3 = models.create_emotional_need_state(self.user, eneed, 1, 0, "", "")
 
         response = self.request_get(
             'emotionalneed-status-history', urlargs=[eneed.id], auth_user=self.user)
@@ -267,10 +267,10 @@ class TestEmotionalNeedViewSet(ApiTestCase):
     def test_history_partner_success(self):
         eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs')
 
-        ens1 = models.create_emotional_need_value(self.user, eneed, -1, 1, "", "")
-        ens2 = models.create_emotional_need_value(self.user, eneed, -1, 1, "", "")
+        ens1 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
+        ens2 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
         models.connect_partners(self.user, self.partner)
-        ens3 = models.create_emotional_need_value(self.user, eneed, 1, 0, "", "")
+        ens3 = models.create_emotional_need_state(self.user, eneed, 1, 0, "", "")
 
         response = self.request_get(
             'emotionalneed-status-history', urlargs=[eneed.id], auth_user=self.partner)

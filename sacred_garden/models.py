@@ -76,7 +76,7 @@ class EmotionalNeedState(models.Model):
         return f'{self.status}: {self.emotional_need.name} ({self.emotional_need.user})'
 
 
-def create_emotional_need_value(user, eneed, status, trend, text, appreciation_text):
+def create_emotional_need_state(user, eneed, status, trend, text, appreciation_text):
     EmotionalNeedState.objects.filter(
         emotional_need=eneed,
         is_current=True,
