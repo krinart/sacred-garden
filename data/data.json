@@ -80,7 +80,7 @@
     "pk": 1,
     "fields": {
       "emotional_need": 2,
-      "status": -20,
+      "status": 0,
       "value_type": 0,
       "value_rel": 0,
       "partner_user": 2,
