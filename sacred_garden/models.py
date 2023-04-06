@@ -41,7 +41,7 @@ class EmotionalNeed(models.Model):
         return f'{self.name} ({self.user})'
 
     @property
-    def current_status(self):
+    def current_state(self):
         if not hasattr(self, PREFETCHED_CURRENT_VALUES_ATTR_NAME):
             return self.emotionalneedstate_set.get(is_current=True)
 

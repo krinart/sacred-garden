@@ -39,11 +39,11 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
-    current_status = EmotionalNeedStateSerializer()
+    current_state = EmotionalNeedStateSerializer()
 
     class Meta:
         model = models.EmotionalNeed
-        fields = ['id', 'name', 'current_status']
+        fields = ['id', 'name', 'current_state']
 
 
 class PartnerSerializer(drf_serializers.ModelSerializer):

@@ -24,13 +24,13 @@ class TestTest(TestCase):
 
             self.assertEqual(len(data), 2)
 
-            del data[0]['current_status']['created_at']
-            del data[1]['current_status']['created_at']
+            del data[0]['current_state']['created_at']
+            del data[1]['current_state']['created_at']
 
             eneed1_data = {
                 'id': eneed1.id,
                 'name': 'Hug',
-                'current_status': {
+                'current_state': {
                     'id': ens1.id,
                     'emotional_need_id': eneed1.id,
                     'status': 2,
@@ -45,7 +45,7 @@ class TestTest(TestCase):
             eneed2_data = {
                 'id': eneed2.id,
                 'name': 'Kiss',
-                'current_status': {
+                'current_state': {
                     'id': ens2.id,
                     'emotional_need_id': eneed2.id,
                     'status': 4,
