@@ -54,10 +54,15 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         return Response({})
 
 
-class EmotionalNeedViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class EmotionalNeedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     queryset = models.EmotionalNeed.objects.all()
-    serializer_class = serializers.CreateEmotionalNeedSerializer
+    serializer_class = serializers.EmotionalNeedSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return serializers.CreateEmotionalNeedSerializer
+        return super().get_serializer_class()
 
     @action(detail=True, methods=['GET'])
     def state_history(self, request, *args, **kwargs):

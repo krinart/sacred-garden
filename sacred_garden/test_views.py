@@ -280,6 +280,38 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(response.data[0]['id'], ens2.id)
         self.assertEqual(response.data[1]['id'], ens3.id)
 
+    def test_get_success(self):
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
+
+        ens1 = models.create_emotional_need_state(self.user, eneed, -1, None, 0, "", "")
+        ens2 = models.create_emotional_need_state(self.user, eneed, -2, None, 0, "", "")
+
+        response = self.request_get(
+            'emotionalneed-detail', urlargs=[eneed.id], auth_user=self.user)
+        self.assertSuccess(response)
+
+        data = response.data
+
+        del data['current_state']['created_at']
+
+        self.assertEqual(
+            data,
+            {
+                'id': eneed.id,
+                'name': 'Hugs',
+                'state_value_type': 0,
+                'current_state': {
+                    'id': ens2.id,
+                    'emotional_need_id': eneed.id,
+                    'status': -2,
+                    'value_abs': None,
+                    'value_rel': 0,
+                    'text': '',
+                    'appreciation_text': '',
+                }
+            }
+        )
+
 
 class TestEmotionalNeedStateViewSet(ApiTestCase):
 
