@@ -256,7 +256,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         ens3 = models.create_emotional_need_state(self.user, eneed, 1, 0, "", "")
 
         response = self.request_get(
-            'emotionalneed-status-history', urlargs=[eneed.id], auth_user=self.user)
+            'emotionalneed-state-history', urlargs=[eneed.id], auth_user=self.user)
         self.assertSuccess(response, expected_status_code=200)
 
         self.assertEqual(len(response.data), 3)
@@ -273,7 +273,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         ens3 = models.create_emotional_need_state(self.user, eneed, 1, 0, "", "")
 
         response = self.request_get(
-            'emotionalneed-status-history', urlargs=[eneed.id], auth_user=self.partner)
+            'emotionalneed-state-history', urlargs=[eneed.id], auth_user=self.partner)
         self.assertSuccess(response, expected_status_code=200)
 
         self.assertEqual(len(response.data), 2)

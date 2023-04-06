@@ -60,7 +60,7 @@ class EmotionalNeedViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.CreateEmotionalNeedSerializer
 
     @action(detail=True, methods=['GET'])
-    def status_history(self, request, *args, **kwargs):
+    def state_history(self, request, *args, **kwargs):
         eneed = self.get_object()
 
         if eneed.user == request.user:
