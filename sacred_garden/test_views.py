@@ -46,6 +46,9 @@ class ApiTestCase(TestCase):
     def assertUnAuthorized(self, response):
         self.assertEqual(response.status_code, 401)
 
+    def assertForbidden(self, response):
+        self.assertEqual(response.status_code, 403)
+
 
 class TestUserViewSet(ApiTestCase):
 
@@ -240,7 +243,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         eneed = models.EmotionalNeed.objects.get()
         self.assertEqual(response.data, {'name': 'Hug', 'id': eneed.id, 'state_value_type': 0})
 
-    def test_unauthorized(self):
+    def test_create_unauthorized(self):
         response = self.request_post(
             'emotionalneed-list', data={'name': 'Hug'})
         self.assertUnAuthorized(response)
@@ -280,6 +283,12 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(response.data[0]['id'], ens2.id)
         self.assertEqual(response.data[1]['id'], ens3.id)
 
+    def test_history_forbidden(self):
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
+        response = self.request_get(
+            'emotionalneed-state-history', urlargs=[eneed.id], auth_user=self.partner)
+        self.assertForbidden(response)
+
     def test_get_success(self):
         eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
 
@@ -311,6 +320,49 @@ class TestEmotionalNeedViewSet(ApiTestCase):
                 }
             }
         )
+
+    def test_get_success_as_partner(self):
+        models.connect_partners(self.user, self.partner)
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
+
+        ens1 = models.create_emotional_need_state(self.user, eneed, -1, None, 0, "", "")
+        ens2 = models.create_emotional_need_state(self.user, eneed, -2, None, 0, "", "")
+
+        response = self.request_get(
+            'emotionalneed-detail', urlargs=[eneed.id], auth_user=self.partner)
+        self.assertSuccess(response)
+
+        data = response.data
+
+        del data['current_state']['created_at']
+
+        self.assertEqual(
+            data,
+            {
+                'id': eneed.id,
+                'name': 'Hugs',
+                'state_value_type': 0,
+                'current_state': {
+                    'id': ens2.id,
+                    'emotional_need_id': eneed.id,
+                    'status': -2,
+                    'value_abs': None,
+                    'value_rel': 0,
+                    'text': '',
+                    'appreciation_text': '',
+                }
+            }
+        )
+
+    def test_get_forbidden(self):
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
+
+        ens1 = models.create_emotional_need_state(self.user, eneed, -1, None, 0, "", "")
+        ens2 = models.create_emotional_need_state(self.user, eneed, -2, None, 0, "", "")
+
+        response = self.request_get(
+            'emotionalneed-detail', urlargs=[eneed.id], auth_user=self.partner)
+        self.assertForbidden(response)
 
 
 class TestEmotionalNeedStateViewSet(ApiTestCase):

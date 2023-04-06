@@ -1,4 +1,5 @@
 from rest_framework import mixins, viewsets
+from rest_framework import permissions as drf_permissions
 from rest_framework import serializers as drf_serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -54,10 +55,27 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         return Response({})
 
 
+class EmotionalNeedPermission(drf_permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, eneed):
+        if eneed.user == request.user:
+            return True
+
+        if eneed.user.partner_user == request.user:
+            return True
+
+        return False
+
+
 class EmotionalNeedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     queryset = models.EmotionalNeed.objects.all()
     serializer_class = serializers.EmotionalNeedSerializer
+
+    permission_classes = [drf_permissions.IsAuthenticated, EmotionalNeedPermission]
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -73,7 +91,6 @@ class EmotionalNeedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, v
         else:
             eneed_statuses = models.find_emotional_need_statuses(eneed, partner_user=request.user)
 
-        # TODO: Do not use CreateEmotionalNeedStateSerializer
         serializer = serializers.EmotionalNeedStateSerializer(
             many=True, instance=eneed_statuses)
 
