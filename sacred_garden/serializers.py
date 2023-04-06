@@ -37,7 +37,7 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
         eneed = attrs['emotional_need_id']
 
         if not eneed.user == user:
-            raise drf_serializers.ValidationError('Anauthorized access', code='unauthorized')
+            self.context['view'].permission_denied(self.context['request'])
 
         return attrs
 

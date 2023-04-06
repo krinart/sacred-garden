@@ -437,24 +437,26 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
         self.assertTrue(eneed_status.is_current)
         self.assertIsNone(eneed_status.partner_user)
 
-    def test_error_unathorized_access(self):
+    def test_create_error_forbidden(self):
         other_user = models.User.objects.create()
 
         response = self.request_post(
             'emotionalneedstate-list',
             data={
                 'emotional_need_id': self.eneed.id,
-                'status': -2,
+                'status': -10,
                 'text': 'Please help',
                 'appreciation_text': 'I love you',
-                'trend': 1,
+                'value_abs': 1,
+                'value_rel': 1,
             },
             auth_user=other_user,
         )
-        self.assertBadRequest(response)
+
+        self.assertForbidden(response)
         self.assertEqual(models.EmotionalNeedState.objects.count(), 0)
 
-    def test_unauthorized(self):
+    def test_create_unauthorized(self):
         response = self.request_post(
             'emotionalneedstate-list', data={
                 'emotional_need_id': self.eneed.id,
