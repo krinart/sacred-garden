@@ -68,7 +68,7 @@ class TestDisconnectPartner(TestCase):
         self.assertIsNotNone(user2.partner_invite_code)
 
 
-class TestCreateEmotionalNeedStatus(TestCase):
+class TestCreateEmotionalNeedState(TestCase):
 
     def setUp(self):
         self.user = models.User.objects.create(email='user@example.com')
@@ -77,7 +77,7 @@ class TestCreateEmotionalNeedStatus(TestCase):
         self.partner_eneed = models.EmotionalNeed.objects.create(user=self.partner, name='Lies')
 
     def assertEmotionalNeedValues(self, eneed, expected_values):
-        actual_values = models.EmotionalNeedStatus.objects.filter(
+        actual_values = models.EmotionalNeedState.objects.filter(
             emotional_need=eneed
         ).order_by('created_at')
 

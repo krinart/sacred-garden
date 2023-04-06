@@ -3,12 +3,12 @@ from rest_framework import serializers as drf_serializers
 from sacred_garden import models
 
 
-class EmotionalNeedStatusSerializer(drf_serializers.ModelSerializer):
+class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
     emotional_need_id = drf_serializers.PrimaryKeyRelatedField(
         queryset=models.EmotionalNeed.objects.all())
 
     class Meta:
-        model = models.EmotionalNeedStatus
+        model = models.EmotionalNeedState
         fields = ['emotional_need_id', 'status', 'trend', 'id', 'text', 'appreciation_text',
                   'created_at']
         read_only_fields = ['id']
@@ -39,7 +39,7 @@ class EmotionalNeedStatusSerializer(drf_serializers.ModelSerializer):
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
-    current_status = EmotionalNeedStatusSerializer()
+    current_status = EmotionalNeedStateSerializer()
 
     class Meta:
         model = models.EmotionalNeed

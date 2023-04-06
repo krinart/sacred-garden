@@ -281,7 +281,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(response.data[1]['id'], ens3.id)
 
 
-class TestEmotionalNeedStatusViewSet(ApiTestCase):
+class TestEmotionalNeedStateViewSet(ApiTestCase):
 
     def setUp(self):
         self.user = models.User.objects.create(
@@ -300,7 +300,7 @@ class TestEmotionalNeedStatusViewSet(ApiTestCase):
         models.connect_partners(self.user, partner)
 
         response = self.request_post(
-            'emotionalneedstatus-list',
+            'emotionalneedstate-list',
             data={
                 'emotional_need_id': self.eneed.id,
                 'status': -20,
@@ -314,7 +314,7 @@ class TestEmotionalNeedStatusViewSet(ApiTestCase):
         del response.data['created_at']
 
         eneed = models.EmotionalNeed.objects.get()
-        eneed_status = models.EmotionalNeedStatus.objects.get(id=response.data['id'])
+        eneed_status = models.EmotionalNeedState.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
@@ -327,7 +327,7 @@ class TestEmotionalNeedStatusViewSet(ApiTestCase):
 
     def test_create_no_partner_success(self):
         response = self.request_post(
-            'emotionalneedstatus-list',
+            'emotionalneedstate-list',
             data={
                 'emotional_need_id': self.eneed.id,
                 'status': -20,
@@ -341,7 +341,7 @@ class TestEmotionalNeedStatusViewSet(ApiTestCase):
         del response.data['created_at']
 
         eneed = models.EmotionalNeed.objects.get()
-        eneed_status = models.EmotionalNeedStatus.objects.get(id=response.data['id'])
+        eneed_status = models.EmotionalNeedState.objects.get(id=response.data['id'])
         self.assertEqual(
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
@@ -356,7 +356,7 @@ class TestEmotionalNeedStatusViewSet(ApiTestCase):
         other_user = models.User.objects.create()
 
         response = self.request_post(
-            'emotionalneedstatus-list',
+            'emotionalneedstate-list',
             data={
                 'emotional_need_id': self.eneed.id,
                 'status': -2,
@@ -367,15 +367,15 @@ class TestEmotionalNeedStatusViewSet(ApiTestCase):
             auth_user=other_user,
         )
         self.assertBadRequest(response)
-        self.assertEqual(models.EmotionalNeedStatus.objects.count(), 0)
+        self.assertEqual(models.EmotionalNeedState.objects.count(), 0)
 
     def test_unauthorized(self):
         response = self.request_post(
-            'emotionalneedstatus-list', data={
+            'emotionalneedstate-list', data={
                 'emotional_need_id': self.eneed.id,
                 'status': -2,
                 'text': 'Please help'
             })
         self.assertUnAuthorized(response)
 
-        self.assertEqual(models.EmotionalNeedStatus.objects.count(), 0)
+        self.assertEqual(models.EmotionalNeedState.objects.count(), 0)

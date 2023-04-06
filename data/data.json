@@ -72,7 +72,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 1,
     "fields": {
       "emotional_need": 2,
@@ -86,7 +86,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 2,
     "fields": {
       "emotional_need": 4,
@@ -102,7 +102,7 @@
 
 
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 3,
     "fields": {
       "emotional_need": 1,
@@ -116,7 +116,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 4,
     "fields": {
       "emotional_need": 1,
@@ -130,7 +130,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 5,
     "fields": {
       "emotional_need": 1,
@@ -144,7 +144,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 5,
     "fields": {
       "emotional_need": 1,
@@ -158,7 +158,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 6,
     "fields": {
       "emotional_need": 1,
@@ -172,7 +172,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 7,
     "fields": {
       "emotional_need": 1,
@@ -186,7 +186,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 8,
     "fields": {
       "emotional_need": 1,
@@ -200,7 +200,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 9,
     "fields": {
       "emotional_need": 1,
@@ -216,7 +216,7 @@
 
 
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 10,
     "fields": {
       "emotional_need": 1,
@@ -230,7 +230,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 11,
     "fields": {
       "emotional_need": 1,
@@ -244,7 +244,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 12,
     "fields": {
       "emotional_need": 1,
@@ -258,7 +258,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 13,
     "fields": {
       "emotional_need": 1,
@@ -272,7 +272,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 14,
     "fields": {
       "emotional_need": 1,
@@ -286,7 +286,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 15,
     "fields": {
       "emotional_need": 1,
@@ -300,7 +300,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 16,
     "fields": {
       "emotional_need": 1,
@@ -314,7 +314,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 17,
     "fields": {
       "emotional_need": 1,
@@ -328,7 +328,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 18,
     "fields": {
       "emotional_need": 1,
@@ -342,7 +342,7 @@
     }
   },
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 19,
     "fields": {
       "emotional_need": 1,
@@ -357,7 +357,7 @@
   },
 
   {
-    "model": "sacred_garden.emotionalneedstatus",
+    "model": "sacred_garden.emotionalneedstate",
     "pk": 20,
     "fields": {
       "emotional_need": 1,

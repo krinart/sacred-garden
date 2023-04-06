@@ -68,14 +68,14 @@ class EmotionalNeedViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         else:
             eneed_statuses = models.find_emotional_need_statuses(eneed, partner_user=request.user)
 
-        # TODO: Do not use CreateEmotionalNeedStatusSerializer
-        serializer = serializers.EmotionalNeedStatusSerializer(
+        # TODO: Do not use CreateEmotionalNeedStateSerializer
+        serializer = serializers.EmotionalNeedStateSerializer(
             many=True, instance=eneed_statuses)
 
         return Response(serializer.data)
 
 
-class EmotionalNeedStatusViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class EmotionalNeedStateViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
-    queryset = models.EmotionalNeedStatus.objects.all()
-    serializer_class = serializers.EmotionalNeedStatusSerializer
+    queryset = models.EmotionalNeedState.objects.all()
+    serializer_class = serializers.EmotionalNeedStateSerializer

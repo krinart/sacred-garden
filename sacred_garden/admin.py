@@ -31,4 +31,4 @@ class UserAdmin(DjangoUserAdmin):
 
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.EmotionalNeed)
-admin.site.register(models.EmotionalNeedStatus)
+admin.site.register(models.EmotionalNeedState)

@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='EmotionalNeedStatus',
+            name='EmotionalNeedState',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('status', models.IntegerField(choices=[(0, 'Good'), (-10, 'Bad'), (-20, 'Problem')])),

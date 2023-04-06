@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from sacred_garden import managers
 
 
-PREFETCHED_CURRENT_VALUES_ATTR_NAME = "current_emotionalneedstatus_set"
+PREFETCHED_CURRENT_VALUES_ATTR_NAME = "current_emotionalneedstate_set"
 
 
 class User(AbstractUser):
@@ -43,15 +43,15 @@ class EmotionalNeed(models.Model):
     @property
     def current_status(self):
         if not hasattr(self, PREFETCHED_CURRENT_VALUES_ATTR_NAME):
-            return self.emotionalneedstatus_set.get(is_current=True)
+            return self.emotionalneedstate_set.get(is_current=True)
 
-        if self.current_emotionalneedstatus_set:
-            return self.current_emotionalneedstatus_set[0]
+        if self.current_emotionalneedstate_set:
+            return self.current_emotionalneedstate_set[0]
 
-        raise EmotionalNeedStatus.DoesNotExist
+        raise EmotionalNeedState.DoesNotExist
 
 
-class EmotionalNeedStatus(models.Model):
+class EmotionalNeedState(models.Model):
     class StatusChoices(models.IntegerChoices):
         GOOD = 0
         BAD = -10
@@ -77,14 +77,14 @@ class EmotionalNeedStatus(models.Model):
 
 
 def create_emotional_need_value(user, eneed, status, trend, text, appreciation_text):
-    EmotionalNeedStatus.objects.filter(
+    EmotionalNeedState.objects.filter(
         emotional_need=eneed,
         is_current=True,
     ).update(
         is_current=False,
     )
 
-    return EmotionalNeedStatus.objects.create(
+    return EmotionalNeedState.objects.create(
         emotional_need=eneed,
         status=status,
         trend=trend,
@@ -133,7 +133,7 @@ def connect_partners(user1, user2):
 
 
 def set_current_user_emotional_need_values_to_partner(user, partner_user):
-    EmotionalNeedStatus.objects.filter(
+    EmotionalNeedState.objects.filter(
         emotional_need__user=user,
         is_current=True
     ).update(
@@ -157,8 +157,8 @@ def disconnect_partner(user):
 def get_emotional_needs_with_prefetched_current_values(user=None):
     qs = EmotionalNeed.objects.prefetch_related(
         models.Prefetch(
-            'emotionalneedstatus_set',
-            queryset=EmotionalNeedStatus.objects.filter(is_current=True),
+            'emotionalneedstate_set',
+            queryset=EmotionalNeedState.objects.filter(is_current=True),
             to_attr=PREFETCHED_CURRENT_VALUES_ATTR_NAME,
         )
     )
@@ -172,7 +172,7 @@ def get_emotional_needs_with_prefetched_current_values(user=None):
 def find_emotional_need_statuses(eneed, user=None, partner_user=None):
     assert user or partner_user, "Either user or partner_user should ne specified"
 
-    qs = EmotionalNeedStatus.objects.filter(
+    qs = EmotionalNeedState.objects.filter(
         emotional_need=eneed,
     )
 
