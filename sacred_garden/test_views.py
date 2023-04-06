@@ -34,6 +34,15 @@ class ApiTestCase(TestCase):
 
         return client.patch(url, data=data)
 
+    def request_delete(self, urlname, urlargs=None, auth_user=None):
+        url = reverse(urlname, args=urlargs)
+
+        client = APIClient()
+        if auth_user:
+            client.force_authenticate(user=auth_user)
+
+        return client.delete(url)
+
     def assertSuccess(self, response, expected_data=None, expected_status_code=200):
         self.assertEqual(response.status_code, expected_status_code, response.data)
 
@@ -466,3 +475,31 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
         self.assertUnAuthorized(response)
 
         self.assertEqual(models.EmotionalNeedState.objects.count(), 0)
+
+    def test_delete_success(self):
+        ens = models.create_emotional_need_state(self.user, self.eneed, -10, 0, 0, "", "")
+
+        response = self.request_delete(
+            'emotionalneedstate-detail', urlargs=[ens.id], auth_user=self.user)
+        self.assertSuccess(response, expected_status_code=204)
+
+        self.assertEqual(models.EmotionalNeedState.objects.count(), 0)
+
+    def test_delete_forbidden(self):
+        other_user = models.User.objects.create(email='user2@example.com')
+        ens = models.create_emotional_need_state(self.user, self.eneed, -10, 0, 0, "", "")
+
+        response = self.request_delete(
+            'emotionalneedstate-detail', urlargs=[ens.id], auth_user=other_user)
+        self.assertForbidden(response)
+
+        self.assertEqual(models.EmotionalNeedState.objects.count(), 1)
+
+    def test_delete_unauthorized(self):
+        ens = models.create_emotional_need_state(self.user, self.eneed, -10, 0, 0, "", "")
+
+        response = self.request_delete(
+            'emotionalneedstate-detail', urlargs=[ens.id])
+        self.assertUnAuthorized(response)
+
+        self.assertEqual(models.EmotionalNeedState.objects.count(), 1)

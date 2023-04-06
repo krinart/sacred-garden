@@ -102,14 +102,8 @@ class EmotionalNeedStatePermission(drf_permissions.BasePermission):
     def has_permission(self, request, view):
         return True
 
-    def has_object_permission(self, request, view, eneed):
-        if eneed.user == request.user:
-            return True
-
-        if eneed.user.partner_user == request.user:
-            return True
-
-        return False
+    def has_object_permission(self, request, view, ens):
+        return ens.emotional_need.user == request.user
 
 
 class EmotionalNeedStateViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
