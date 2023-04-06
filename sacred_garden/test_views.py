@@ -234,11 +234,11 @@ class TestEmotionalNeedViewSet(ApiTestCase):
 
     def test_create_success(self):
         response = self.request_post(
-            'emotionalneed-list', data={'name': 'Hug'}, auth_user=self.user)
+            'emotionalneed-list', data={'name': 'Hug', 'state_value_type': 0}, auth_user=self.user)
         self.assertSuccess(response, expected_status_code=201)
 
         eneed = models.EmotionalNeed.objects.get()
-        self.assertEqual(response.data, {'name': 'Hug', 'id': eneed.id})
+        self.assertEqual(response.data, {'name': 'Hug', 'id': eneed.id, 'state_value_type': 0})
 
     def test_unauthorized(self):
         response = self.request_post(
@@ -248,7 +248,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(models.EmotionalNeed.objects.count(), 0)
 
     def test_history_self_success(self):
-        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs')
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
 
         ens1 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
         ens2 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
@@ -265,7 +265,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(response.data[2]['id'], ens3.id)
 
     def test_history_partner_success(self):
-        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs')
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
 
         ens1 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
         ens2 = models.create_emotional_need_state(self.user, eneed, -1, 1, "", "")
@@ -292,6 +292,7 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
         self.eneed = models.EmotionalNeed.objects.create(
             user=self.user,
             name='Hug',
+            state_value_type=0,
         )
 
     def test_create_with_partner_success(self):

@@ -43,7 +43,7 @@ class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.EmotionalNeed
-        fields = ['id', 'name', 'current_state']
+        fields = ['id', 'name', 'current_state', 'state_value_type']
 
 
 class PartnerSerializer(drf_serializers.ModelSerializer):
@@ -104,7 +104,7 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.EmotionalNeed
-        fields = ['name', 'id']
+        fields = ['name', 'id', 'state_value_type']
         read_only_fields = ['id']
 
     def validate(self, attrs):

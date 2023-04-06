@@ -8,11 +8,11 @@ class TestTest(TestCase):
 
     def test_test(self):
         user = models.User.objects.create()
-        eneed1 = models.EmotionalNeed.objects.create(user=user, name='Hug')
+        eneed1 = models.EmotionalNeed.objects.create(user=user, name='Hug', state_value_type=0)
         models.create_emotional_need_state(user, eneed1, 1, 0, "", "")
         ens1 = models.create_emotional_need_state(user, eneed1, 2, 1, "", "")
 
-        eneed2 = models.EmotionalNeed.objects.create(user=user, name='Kiss')
+        eneed2 = models.EmotionalNeed.objects.create(user=user, name='Kiss', state_value_type=0)
         models.create_emotional_need_state(user, eneed2, 3, 0, "", "")
         ens2 = models.create_emotional_need_state(user, eneed2, 4, 1, "", "")
 
@@ -30,6 +30,7 @@ class TestTest(TestCase):
             eneed1_data = {
                 'id': eneed1.id,
                 'name': 'Hug',
+                'state_value_type': 0,
                 'current_state': {
                     'id': ens1.id,
                     'emotional_need_id': eneed1.id,
@@ -45,6 +46,7 @@ class TestTest(TestCase):
             eneed2_data = {
                 'id': eneed2.id,
                 'name': 'Kiss',
+                'state_value_type': 0,
                 'current_state': {
                     'id': ens2.id,
                     'emotional_need_id': eneed2.id,

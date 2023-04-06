@@ -34,8 +34,13 @@ class User(AbstractUser):
 
 
 class EmotionalNeed(models.Model):
+    class StateValueType(models.IntegerChoices):
+        RELATIVE = 0
+        ABSOLUTE = 1
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
+    state_value_type = models.IntegerField(choices=StateValueType.choices)
 
     def __str__(self):
         return f'{self.name} ({self.user})'

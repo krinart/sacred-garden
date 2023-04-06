@@ -73,8 +73,8 @@ class TestCreateEmotionalNeedState(TestCase):
     def setUp(self):
         self.user = models.User.objects.create(email='user@example.com')
         self.partner = models.User.objects.create(email='partner@example.com')
-        self.user_eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs')
-        self.partner_eneed = models.EmotionalNeed.objects.create(user=self.partner, name='Lies')
+        self.user_eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
+        self.partner_eneed = models.EmotionalNeed.objects.create(user=self.partner, name='Lies', state_value_type=0)
 
     def assertEmotionalNeedValues(self, eneed, expected_values):
         actual_values = models.EmotionalNeedState.objects.filter(
