@@ -152,11 +152,20 @@ class ConnectPartnerSerializer(drf_serializers.Serializer):
 
 class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
+    initial_status = drf_serializers.ChoiceField(
+        choices=models.EmotionalNeedState.StatusChoices.choices,
+        write_only=True)
+
     class Meta:
         model = models.EmotionalNeed
-        fields = ['name', 'id', 'state_value_type']
+        fields = ['name', 'id', 'state_value_type', 'initial_status']
         read_only_fields = ['id']
 
     def validate(self, attrs):
         attrs['user_id'] = self.context['request'].user.id
         return attrs
+
+    def create(self, validated_data):
+        initial_status = validated_data.pop('initial_status')
+        instance = super().create(validated_data)
+        return instance

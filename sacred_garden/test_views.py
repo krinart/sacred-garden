@@ -255,7 +255,9 @@ class TestEmotionalNeedViewSet(ApiTestCase):
 
     def test_create_success(self):
         response = self.request_post(
-            'emotionalneed-list', data={'name': 'Hug', 'state_value_type': 0}, auth_user=self.user)
+            'emotionalneed-list',
+            data={'name': 'Hug', 'state_value_type': 0, 'initial_status': 0},
+            auth_user=self.user)
         self.assertSuccess(response, expected_status_code=201)
 
         eneed = models.EmotionalNeed.objects.get()
