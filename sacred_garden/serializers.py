@@ -154,7 +154,8 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
     initial_status = drf_serializers.ChoiceField(
         choices=models.EmotionalNeedState.StatusChoices.choices,
-        write_only=True)
+        write_only=True,
+        required=False)
 
     class Meta:
         model = models.EmotionalNeed
@@ -166,6 +167,12 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        initial_status = validated_data.pop('initial_status')
+        initial_status = validated_data.pop('initial_status', None)
         instance = super().create(validated_data)
+
+        if initial_status is not None:
+            models.create_emotional_need_state(
+                self.context['request'].user,
+                instance,
+                initial_status, None, None, "", "")
         return instance

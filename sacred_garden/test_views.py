@@ -253,7 +253,19 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.partner = models.User.objects.create(
             email='user2@example.com')
 
-    def test_create_success(self):
+    def test_create_success_no_initial_status(self):
+        response = self.request_post(
+            'emotionalneed-list',
+            data={'name': 'Hug', 'state_value_type': 0},
+            auth_user=self.user)
+        self.assertSuccess(response, expected_status_code=201)
+
+        eneed = models.EmotionalNeed.objects.get()
+        self.assertEqual(response.data, {'name': 'Hug', 'id': eneed.id, 'state_value_type': 0})
+
+        self.assertEqual(models.EmotionalNeedState.objects.count(), 0)
+
+    def test_create_success_with_initial_status(self):
         response = self.request_post(
             'emotionalneed-list',
             data={'name': 'Hug', 'state_value_type': 0, 'initial_status': 0},
@@ -262,6 +274,8 @@ class TestEmotionalNeedViewSet(ApiTestCase):
 
         eneed = models.EmotionalNeed.objects.get()
         self.assertEqual(response.data, {'name': 'Hug', 'id': eneed.id, 'state_value_type': 0})
+
+        self.assertEqual(models.EmotionalNeedState.objects.count(), 1)
 
     def test_create_unauthorized(self):
         response = self.request_post(
