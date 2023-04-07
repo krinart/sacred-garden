@@ -33,11 +33,18 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        user = self.context['request'].user
-        eneed = attrs['emotional_need_id']
+        # for create
+        if not self.instance:
+            user = self.context['request'].user
+            eneed = attrs['emotional_need_id']
 
-        if not eneed.user == user:
-            self.context['view'].permission_denied(self.context['request'])
+            if not eneed.user == user:
+                self.context['view'].permission_denied(self.context['request'])
+
+        # for update
+        else:
+            if self.instance.emotional_need.user != self.context['request'].user:
+                self.context['view'].permission_denied(self.context['request'])
 
         return attrs
 
@@ -65,6 +72,14 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
             instance.value_abs = get_abs_value(instance, prev)
 
         return super().to_representation(instance)
+
+    def __init__(self, instance=None, data=drf_serializers.empty, **kwargs):
+        super().__init__(instance=instance, data=data, **kwargs)
+
+        # Trick to ignore emotional_need_id for PUT requests
+        request = kwargs.get('context', {}).get('request')
+        if instance and request and request.method == 'PUT':
+            self.fields.pop('emotional_need_id')
 
 
 def get_abs_value(ens, ens_prev):

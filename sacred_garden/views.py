@@ -106,7 +106,10 @@ class EmotionalNeedStatePermission(drf_permissions.BasePermission):
         return ens.emotional_need.user == request.user
 
 
-class EmotionalNeedStateViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class EmotionalNeedStateViewSet(mixins.CreateModelMixin,
+                                mixins.DestroyModelMixin,
+                                mixins.UpdateModelMixin,
+                                viewsets.GenericViewSet):
 
     queryset = models.EmotionalNeedState.objects.all()
     serializer_class = serializers.EmotionalNeedStateSerializer

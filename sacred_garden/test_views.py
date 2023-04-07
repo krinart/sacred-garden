@@ -34,6 +34,15 @@ class ApiTestCase(TestCase):
 
         return client.patch(url, data=data)
 
+    def request_put(self, urlname, urlargs=None, auth_user=None, data=None):
+        url = reverse(urlname, args=urlargs)
+
+        client = APIClient()
+        if auth_user:
+            client.force_authenticate(user=auth_user)
+
+        return client.put(url, data=data)
+
     def request_delete(self, urlname, urlargs=None, auth_user=None):
         url = reverse(urlname, args=urlargs)
 
@@ -503,3 +512,71 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
         self.assertUnAuthorized(response)
 
         self.assertEqual(models.EmotionalNeedState.objects.count(), 1)
+
+    def test_update_success(self):
+        ens = models.create_emotional_need_state(self.user, self.eneed, -10, 0, 0, "", "")
+
+        response = self.request_put(
+            'emotionalneedstate-detail',
+            urlargs=[ens.id],
+            data={
+                'status': -20,
+                'value_rel': 1,
+                'text': 'Please help',
+                'appreciation_text': 'I love you',
+            },
+            auth_user=self.user,
+        )
+        self.assertSuccess(response, expected_status_code=200)
+
+        updated_ens = models.EmotionalNeedState.objects.get()
+        self.assertEqual(updated_ens.status, -20)
+        self.assertEqual(updated_ens.value_rel, 1)
+        self.assertEqual(updated_ens.text, 'Please help')
+        self.assertEqual(updated_ens.appreciation_text, 'I love you')
+
+    def test_update_emotional_need_id_is_ignored(self):
+        ens = models.create_emotional_need_state(self.user, self.eneed, -10, 0, 0, "", "")
+
+        response = self.request_put(
+            'emotionalneedstate-detail',
+            urlargs=[ens.id],
+            data={
+                'status': -20,
+                'value_rel': 1,
+                'text': 'Please help',
+                'appreciation_text': 'I love you',
+                'emotional_need_id': 20,
+            },
+            auth_user=self.user,
+        )
+        self.assertSuccess(response, expected_status_code=200)
+
+        updated_ens = models.EmotionalNeedState.objects.get()
+        self.assertEqual(updated_ens.status, -20)
+        self.assertEqual(updated_ens.value_rel, 1)
+        self.assertEqual(updated_ens.text, 'Please help')
+        self.assertEqual(updated_ens.appreciation_text, 'I love you')
+
+    def test_update_forbidden(self):
+        other_user = models.User.objects.create(email='user2@example.com')
+        ens = models.create_emotional_need_state(self.user, self.eneed, -10, 0, 0, "", "")
+
+        response = self.request_put(
+            'emotionalneedstate-detail',
+            urlargs=[ens.id],
+            data={
+                'status': -20,
+                'value_rel': 1,
+                'text': 'Please help',
+                'appreciation_text': 'I love you',
+            },
+            auth_user=other_user,
+        )
+        self.assertForbidden(response)
+
+        updated_ens = models.EmotionalNeedState.objects.get()
+        self.assertEqual(updated_ens.status, -10)
+        self.assertEqual(updated_ens.value_rel, 0)
+        self.assertEqual(updated_ens.text, '')
+        self.assertEqual(updated_ens.appreciation_text, '')
