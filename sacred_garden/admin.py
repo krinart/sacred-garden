@@ -29,6 +29,12 @@ class UserAdmin(DjangoUserAdmin):
     ordering = ("email",)
 
 
+class EmotionalNeedStateAdmin(admin.ModelAdmin):
+    list_filter = ('emotional_need__name', )
+    list_display = ('__str__', 'created_at', )
+    ordering = ('-created_at', )
+
+
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.EmotionalNeed)
-admin.site.register(models.EmotionalNeedState)
+admin.site.register(models.EmotionalNeedState, EmotionalNeedStateAdmin)

@@ -91,7 +91,9 @@ def get_abs_value(ens, ens_prev):
     if not ens_prev:
         return ens.value_rel
 
-    return ens_prev.value_abs + ens.value_rel
+    prev_value_abs = ens_prev.value_abs or 0
+
+    return prev_value_abs + ens.value_rel
 
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
