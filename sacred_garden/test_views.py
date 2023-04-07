@@ -347,6 +347,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
                     'id': ens2.id,
                     'emotional_need_id': eneed.id,
                     'status': -2,
+                    'is_initial_state': False,
                     'value_abs': None,
                     'value_rel': 0,
                     'text': '',
@@ -382,6 +383,7 @@ class TestEmotionalNeedViewSet(ApiTestCase):
                     'status': -2,
                     'value_abs': None,
                     'value_rel': 0,
+                    'is_initial_state': False,
                     'text': '',
                     'appreciation_text': '',
                 }
@@ -438,7 +440,7 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
              'text': 'Please help', 'appreciation_text': 'I love you',
-             'value_rel': 1, 'value_abs': None})
+             'value_rel': 1, 'value_abs': None, 'is_initial_state': False})
 
         self.assertEqual(eneed_status.status, -20)
         self.assertTrue(eneed_status.is_current)
@@ -465,7 +467,7 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
             response.data,
             {'emotional_need_id': eneed.id, 'id': eneed_status.id, 'status': -20,
              'text': 'Please help', 'appreciation_text': 'I love you',
-             'value_rel': 1, 'value_abs': None})
+             'value_rel': 1, 'value_abs': None, 'is_initial_state': False,})
 
         self.assertEqual(eneed_status.status, -20)
         self.assertTrue(eneed_status.is_current)

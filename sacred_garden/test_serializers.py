@@ -44,7 +44,7 @@ class TestEmotionalNeedSerializer(TestCase):
                     'value_rel': None,
                     'text': '',
                     'appreciation_text': '',
-
+                    'is_initial_state': False,
                 }
             }
             self.assertDictEqual(data[0], eneed1_data)
@@ -61,9 +61,9 @@ class TestEmotionalNeedSerializer(TestCase):
                     'value_rel': 1,
                     'text': '',
                     'appreciation_text': '',
+                    'is_initial_state': False,
                 }
             }
-            # import ipdb; ipdb.set_trace()
             self.assertDictEqual(data[1], eneed2_data)
 
 
@@ -108,6 +108,7 @@ class TestEmotionalNeedStateSerializer(TestCase):
                 'value_rel': 1,
                 'text': '',
                 'appreciation_text': '',
+                'is_initial_state': False,
             }
         )
 
@@ -121,6 +122,7 @@ class TestEmotionalNeedStateSerializer(TestCase):
                 'value_rel': -1,
                 'text': '',
                 'appreciation_text': '',
+                'is_initial_state': False,
             }
         )
 
@@ -144,6 +146,7 @@ class TestEmotionalNeedStateSerializer(TestCase):
                 'value_rel': None,
                 'text': '',
                 'appreciation_text': '',
+                'is_initial_state': False,
             }
         )
 
@@ -157,6 +160,7 @@ class TestEmotionalNeedStateSerializer(TestCase):
                 'value_rel': None,
                 'text': '',
                 'appreciation_text': '',
+                'is_initial_state': False,
             }
         )
 

@@ -20,17 +20,22 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
     emotional_need_id = drf_serializers.PrimaryKeyRelatedField(
         queryset=models.EmotionalNeed.objects.all())
 
+    is_initial_state = drf_serializers.SerializerMethodField()
+
     class Meta:
         model = models.EmotionalNeedState
         list_serializer_class = EmotionalNeedStateListSerializer
         fields = ['emotional_need_id', 'status',
                   'value_abs', 'value_rel', 'id', 'text', 'appreciation_text',
-                  'created_at']
+                  'created_at', 'is_initial_state']
         read_only_fields = ['id']
         extra_kwargs = {
             'text': {'required': True},
             'appreciation_text': {'required': True},
         }
+
+    def get_is_initial_state(self, instance):
+        return instance.value_abs is None and instance.value_rel is None
 
     def validate(self, attrs):
         # for create
@@ -83,8 +88,10 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
 
 
 def get_abs_value(ens, ens_prev):
-    prev_value = ens_prev and ens_prev.value_abs or 0
-    return prev_value + ens.value_rel
+    if not ens_prev:
+        return ens.value_rel
+
+    return ens_prev.value_abs + ens.value_rel
 
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
