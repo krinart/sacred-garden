@@ -115,11 +115,23 @@ class PartnerSerializer(drf_serializers.ModelSerializer):
 class MeSerializer(drf_serializers.ModelSerializer):
 
     partner_user = PartnerSerializer()
+    unread_letters_count = drf_serializers.SerializerMethodField()
 
     class Meta:
         model = models.User
         fields = ['id', 'first_name',
-                  'partner_user', 'partner_name', 'partner_invite_code']
+                  'partner_user', 'partner_name', 'partner_invite_code',
+                  'unread_letters_count']
+
+    def get_unread_letters_count(self, instance):
+        if not instance.partner_user:
+            return 0
+
+        return models.EmotionalLetter.objects.filter(
+            sender=instance.partner_user,
+            recipient=instance,
+            is_read=False,
+        ).count()
 
 
 class UserUpdateSerializer(drf_serializers.ModelSerializer):

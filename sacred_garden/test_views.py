@@ -127,12 +127,17 @@ class TestUserViewSet(ApiTestCase):
             'partner_name': 'Eva_Love',
             'partner_invite_code': self.user1.partner_invite_code,
             'emotional_needs': [],
+            'unread_letters_count': 0,
         }
 
         self.assertSuccess(response, expected_data=expected_data)
 
     def test_me_success_with_partner(self):
         models.connect_partners(self.user1, self.user2)
+
+        models.EmotionalLetter.objects.create(sender=self.user2, recipient=self.user1, is_read=True)
+        models.EmotionalLetter.objects.create(sender=self.user2, recipient=self.user1, is_read=False)
+
         response = self.request_get('user-me', auth_user=self.user1)
 
         expected_data = {
@@ -146,6 +151,7 @@ class TestUserViewSet(ApiTestCase):
             'partner_name': 'Eva_Love',
             'partner_invite_code': self.user1.partner_invite_code,
             'emotional_needs': [],
+            'unread_letters_count': 1,
         }
 
         self.assertSuccess(response, expected_data=expected_data)
