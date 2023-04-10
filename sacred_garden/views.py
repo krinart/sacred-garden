@@ -169,6 +169,12 @@ class AppreciationsAPIView(drf_views.APIView):
             Q(appreciation_text__isnull=True)|Q(appreciation_text='')
         )
 
+        instances = sorted(
+            chain(letters, eneed_states),
+            key=lambda x: x.created_at,
+            reverse=True,
+        )
+
         serializer = serializers.AppreciationSerializer(
-            instance=chain(letters, eneed_states), many=True)
+            instance=instances , many=True)
         return Response(serializer.data)
