@@ -202,10 +202,13 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
 class EmotionalLetterSerializer(drf_serializers.ModelSerializer):
 
+    is_sent = drf_serializers.SerializerMethodField()
+    is_received = drf_serializers.SerializerMethodField()
+
     class Meta:
         model = models.EmotionalLetter
         fields = ['text', 'appreciation_text', 'advice_text', 'sender',
-                  'recipient', 'is_read', 'created_at', 'id']
+                  'recipient', 'is_read', 'created_at', 'id', 'is_sent', 'is_received']
         read_only_fields = ['sender', 'recipient', 'is_read', 'created_at', 'id']
 
     def validate(self, attrs):
@@ -215,6 +218,12 @@ class EmotionalLetterSerializer(drf_serializers.ModelSerializer):
         attrs['sender'] = self.context['request'].user
         attrs['recipient'] = self.context['request'].user.partner_user
         return attrs
+
+    def get_is_sent(self, instance):
+        return instance.sender == self.context['request'].user
+
+    def get_is_received(self, instance):
+        return not self.get_is_sent(instance)
 
 
 class AppreciationSerializer(drf_serializers.Serializer):

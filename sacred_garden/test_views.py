@@ -670,6 +670,8 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                 'sender': self.user1.id,
                 'recipient': self.user2.id,
                 'is_read': False,
+                'is_sent': True,
+                'is_received': False,
             }
         )
 
@@ -719,6 +721,8 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                     'sender': self.user2.id,
                     'recipient': self.user1.id,
                     'is_read': False,
+                    'is_sent': False,
+                    'is_received': True,
                 },
                 {
                     'id': l1.id,
@@ -728,6 +732,8 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                     'sender': self.user1.id,
                     'recipient': self.user2.id,
                     'is_read': False,
+                    'is_sent': True,
+                    'is_received': False,
                 },
             ]
         )
@@ -762,6 +768,8 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                 'sender': self.user1.id,
                 'recipient': self.user2.id,
                 'is_read': False,
+                'is_sent': True,
+                'is_received': False,
             },
         )
 
@@ -791,6 +799,8 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                 'sender': self.user1.id,
                 'recipient': self.user2.id,
                 'is_read': False,
+                'is_sent': False,
+                'is_received': True,
             },
         )
 
