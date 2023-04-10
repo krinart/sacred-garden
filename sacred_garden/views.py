@@ -1,10 +1,13 @@
+from itertools import chain
+
 from django.db.models import Q
 
 from rest_framework import mixins, viewsets
 from rest_framework import permissions as drf_permissions
 from rest_framework import serializers as drf_serializers
-from rest_framework.response import Response
+from rest_framework import views as drf_views
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from sacred_garden import models
 from sacred_garden import serializers
@@ -153,3 +156,19 @@ class EmotionalLetterViewSet(mixins.ListModelMixin,
         letter.save()
 
         return Response()
+
+
+class AppreciationsAPIView(drf_views.APIView):
+
+    def get(self, request):
+        letters = models.EmotionalLetter.objects.filter(recipient=self.request.user)
+
+        eneed_states = models.EmotionalNeedState.objects.filter(
+            partner_user=self.request.user,
+        ).exclude(
+            Q(appreciation_text__isnull=True)|Q(appreciation_text='')
+        )
+
+        serializer = serializers.AppreciationSerializer(
+            instance=chain(letters, eneed_states), many=True)
+        return Response(serializer.data)

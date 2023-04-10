@@ -13,6 +13,7 @@ router.register(r'emotional-letters', views.EmotionalLetterViewSet)
 urlpatterns = [
     path('api-token-auth/', obtain_jwt_token),
     path('api-token-refresh/', refresh_jwt_token),
+    path('appreciations/', views.AppreciationsAPIView.as_view(), name='appreciations'),
 ]
 
 

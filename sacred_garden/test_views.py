@@ -838,3 +838,56 @@ class TestEmotionalLetterViewSet(ApiTestCase):
         self.assertNotFound(response)
 
         self.assertFalse(models.EmotionalLetter.objects.get().is_read)
+
+
+class TestAppreciationsAPIView(ApiTestCase):
+
+    def setUp(self):
+        self.user1 = models.User.objects.create(email='user1@example.com')
+        self.user2 = models.User.objects.create(email='user2@example.com')
+        models.connect_partners(self.user1, self.user2)
+
+        eneed = models.EmotionalNeed.objects.create(user=self.user1, name='Hugs', state_value_type=0)
+
+        self.ens1 = models.create_emotional_need_state(self.user1, eneed, -1, None, 0, "", "")
+        self.ens2 = models.create_emotional_need_state(self.user1, eneed, -2, None, 0, "", "love_you_2")
+
+        self.letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        models.EmotionalLetter.objects.create(
+            sender=self.user2,
+            recipient=self.user1,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+    def test_test(self):
+        response = self.request_get('appreciations', auth_user=self.user2)
+        self.assertSuccess(response)
+
+        self.assertEqual(len(response.data),2)
+
+        del response.data[0]['created_at']
+        self.assertEqual(
+            response.data[0],
+            {
+                'id': self.letter.id,
+                'appreciation_text': 'some_appreciation_text',
+                'source_entity': 'emotional_letter',
+            })
+
+        del response.data[1]['created_at']
+        self.assertEqual(
+            response.data[1],
+            {
+                'id': self.ens2.id,
+                'appreciation_text': 'love_you_2',
+                'source_entity': 'emotional_need_state',
+            })

@@ -203,3 +203,19 @@ class EmotionalLetterSerializer(drf_serializers.ModelSerializer):
         attrs['sender'] = self.context['request'].user
         attrs['recipient'] = self.context['request'].user.partner_user
         return attrs
+
+
+class AppreciationSerializer(drf_serializers.Serializer):
+
+    id = drf_serializers.IntegerField()
+    source_entity = drf_serializers.SerializerMethodField()
+    appreciation_text = drf_serializers.CharField()
+    created_at = drf_serializers.DateTimeField()
+
+    def get_source_entity(self, instance):
+        if isinstance(instance, models.EmotionalLetter):
+            return 'emotional_letter'
+        elif isinstance(instance, models.EmotionalNeedState):
+            return 'emotional_need_state'
+
+        raise ValueError(f'Unsupported instance type: {type(instance)}')
