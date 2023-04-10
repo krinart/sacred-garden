@@ -35,6 +35,12 @@ class EmotionalNeedStateAdmin(admin.ModelAdmin):
     ordering = ('-created_at', )
 
 
+class EmotionalLetterAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'recipient', 'is_read')
+    ordering = ('-created_at',)
+
+
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.EmotionalNeed)
 admin.site.register(models.EmotionalNeedState, EmotionalNeedStateAdmin)
+admin.site.register(models.EmotionalLetter, EmotionalLetterAdmin)
