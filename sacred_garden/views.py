@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from rest_framework import mixins, viewsets
 from rest_framework import permissions as drf_permissions
 from rest_framework import serializers as drf_serializers
@@ -115,3 +117,39 @@ class EmotionalNeedStateViewSet(mixins.CreateModelMixin,
     serializer_class = serializers.EmotionalNeedStateSerializer
 
     permission_classes = [drf_permissions.IsAuthenticated, EmotionalNeedStatePermission]
+
+
+class EmotionalLetterPermission(drf_permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, letter):
+        return letter.sender == request.user or letter.recipient == request.user
+
+
+class EmotionalLetterViewSet(mixins.ListModelMixin,
+                             mixins.RetrieveModelMixin,
+                             mixins.CreateModelMixin,
+                             viewsets.GenericViewSet):
+
+    queryset = models.EmotionalLetter.objects.all()
+    serializer_class = serializers.EmotionalLetterSerializer
+
+    permission_classes = [drf_permissions.IsAuthenticated, EmotionalLetterPermission]
+
+    def get_queryset(self):
+        return self.queryset.filter(
+            Q(sender=self.request.user) | Q(recipient=self.request.user)
+        ).order_by(
+            '-created_at'
+        )
+
+    @action(detail=True, methods=['PUT'])
+    def mark_as_read(self, request, *args, **kwargs):
+
+        letter = self.get_object()
+        letter.is_read = True
+        letter.save()
+
+        return Response()

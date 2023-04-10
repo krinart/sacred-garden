@@ -8,6 +8,7 @@ router = routers.SimpleRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'emotional-needs', views.EmotionalNeedViewSet)
 router.register(r'emotional-need-states', views.EmotionalNeedStateViewSet)
+router.register(r'emotional-letters', views.EmotionalLetterViewSet)
 
 urlpatterns = [
     path('api-token-auth/', obtain_jwt_token),

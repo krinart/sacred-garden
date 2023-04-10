@@ -103,6 +103,17 @@ def create_emotional_need_state(user, eneed, status, value_abs, value_rel, text,
     )
 
 
+class EmotionalLetter(models.Model):
+
+    sender = models.ForeignKey(User, models.CASCADE, related_name='letters_sent_set')
+    recipient = models.ForeignKey(User, models.CASCADE, related_name='letters_received_set')
+    appreciation_text = models.TextField()
+    text = models.TextField()
+    advice_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+
 def get_new_invite_code(k=6):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=k))
 

@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from rest_framework import exceptions
 from rest_framework.test import APIClient
 
 from sacred_garden import models
@@ -58,14 +59,20 @@ class ApiTestCase(TestCase):
         if expected_data is not None:
             self.assertEqual(response.data, expected_data)
 
-    def assertBadRequest(self, response):
+    def assertBadRequest(self, response, errors=None):
         self.assertEqual(response.status_code, 400)
+
+        if errors:
+            self.assertEqual(response.data, errors)
 
     def assertUnAuthorized(self, response):
         self.assertEqual(response.status_code, 401)
 
     def assertForbidden(self, response):
         self.assertEqual(response.status_code, 403)
+
+    def assertNotFound(self, response):
+        self.assertEqual(response.status_code, 404)
 
 
 class TestUserViewSet(ApiTestCase):
@@ -598,3 +605,236 @@ class TestEmotionalNeedStateViewSet(ApiTestCase):
         self.assertEqual(updated_ens.value_rel, 0)
         self.assertEqual(updated_ens.text, '')
         self.assertEqual(updated_ens.appreciation_text, '')
+
+
+class TestEmotionalLetterViewSet(ApiTestCase):
+
+    def setUp(self):
+        self.user1 = models.User.objects.create(email='user1@example.com')
+        self.user2 = models.User.objects.create(email='user2@example.com')
+
+    def test_create_error_partner_is_required(self):
+        response = self.request_post(
+            'emotionalletter-list',
+            data={
+                'text': 'some_text',
+                'appreciation_text': 'some_appreciation_text',
+                'advice_text': 'some_advice_text',
+
+            },
+            auth_user=self.user1,
+        )
+        self.assertBadRequest(
+            response,
+            errors={'non_field_errors': [exceptions.ErrorDetail(string='Partner is required', code='invalid')]}
+        )
+
+    def test_create_success(self):
+        models.connect_partners(self.user1, self.user2)
+
+        response = self.request_post(
+            'emotionalletter-list',
+            data={
+                'text': 'some_text',
+                'appreciation_text': 'some_appreciation_text',
+                'advice_text': 'some_advice_text',
+
+            },
+            auth_user=self.user1,
+        )
+        self.assertSuccess(response, expected_status_code=201)
+
+        self.assertEqual(models.EmotionalLetter.objects.count(), 1)
+
+        letter = models.EmotionalLetter.objects.get()
+        self.assertEqual(letter.sender, self.user1)
+        self.assertEqual(letter.recipient, self.user2)
+        self.assertEqual(letter.text, 'some_text')
+        self.assertEqual(letter.appreciation_text, 'some_appreciation_text')
+        self.assertEqual(letter.advice_text, 'some_advice_text')
+
+        del response.data['created_at']
+        self.assertEqual(
+            response.data,
+            {
+                'id': letter.id,
+                'text': 'some_text',
+                'appreciation_text': 'some_appreciation_text',
+                'advice_text': 'some_advice_text',
+                'sender': self.user1.id,
+                'recipient': self.user2.id,
+                'is_read': False,
+            }
+        )
+
+    def test_list_success(self):
+        other_user = models.User.objects.create(email='user3@example.com')
+        models.connect_partners(self.user1, self.user2)
+
+        l1 = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text_1',
+            appreciation_text='some_appreciation_text_1',
+            advice_text='some_advice_text_1',
+        )
+
+        l2 = models.EmotionalLetter.objects.create(
+            sender=self.user2,
+            recipient=self.user1,
+            text='some_text_2',
+            appreciation_text='some_appreciation_text_2',
+            advice_text='some_advice_text_2',
+        )
+
+        # should not be present in response
+        models.EmotionalLetter.objects.create(
+            sender=self.user2,
+            recipient=other_user,
+            text='some_text_2',
+            appreciation_text='some_appreciation_text_2',
+            advice_text='some_advice_text_2',
+        )
+
+        response = self.request_get('emotionalletter-list', auth_user=self.user1)
+        self.assertSuccess(response)
+        self.assertEqual(len(response.data), 2)
+
+        del response.data[0]['created_at']
+        del response.data[1]['created_at']
+        self.assertEqual(
+            response.data,
+            [
+                {
+                    'id': l2.id,
+                    'text': 'some_text_2',
+                    'appreciation_text': 'some_appreciation_text_2',
+                    'advice_text': 'some_advice_text_2',
+                    'sender': self.user2.id,
+                    'recipient': self.user1.id,
+                    'is_read': False,
+                },
+                {
+                    'id': l1.id,
+                    'text': 'some_text_1',
+                    'appreciation_text': 'some_appreciation_text_1',
+                    'advice_text': 'some_advice_text_1',
+                    'sender': self.user1.id,
+                    'recipient': self.user2.id,
+                    'is_read': False,
+                },
+            ]
+        )
+
+    def test_list_unauthorized(self):
+        response = self.request_get('emotionalletter-list')
+        self.assertUnAuthorized(response)
+
+    def test_get_success_as_sender(self):
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_get(
+            'emotionalletter-detail', urlargs=[letter.id], auth_user=self.user1)
+        self.assertSuccess(response)
+
+        del response.data['created_at']
+        self.assertEqual(
+            response.data,
+            {
+                'id': letter.id,
+                'text': 'some_text',
+                'appreciation_text': 'some_appreciation_text',
+                'advice_text': 'some_advice_text',
+                'sender': self.user1.id,
+                'recipient': self.user2.id,
+                'is_read': False,
+            },
+        )
+
+    def test_get_success_as_recipient(self):
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_get(
+            'emotionalletter-detail', urlargs=[letter.id], auth_user=self.user2)
+        self.assertSuccess(response)
+
+        del response.data['created_at']
+        self.assertEqual(
+            response.data,
+            {
+                'id': letter.id,
+                'text': 'some_text',
+                'appreciation_text': 'some_appreciation_text',
+                'advice_text': 'some_advice_text',
+                'sender': self.user1.id,
+                'recipient': self.user2.id,
+                'is_read': False,
+            },
+        )
+
+    def test_get_not_found(self):
+        other_user = models.User.objects.create(email='user3@example.com')
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_get(
+            'emotionalletter-detail', urlargs=[letter.id], auth_user=other_user)
+        self.assertNotFound(response)
+
+    def test_mark_as_read_success(self):
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_put(
+            'emotionalletter-mark-as-read', urlargs=[letter.id], auth_user=self.user1)
+        self.assertSuccess(response)
+
+        self.assertTrue(models.EmotionalLetter.objects.get().is_read)
+
+    def test_mark_as_read_error(self):
+        other_user = models.User.objects.create(email='user3@example.com')
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_put(
+            'emotionalletter-mark-as-read', urlargs=[letter.id], auth_user=other_user)
+        self.assertNotFound(response)
+
+        self.assertFalse(models.EmotionalLetter.objects.get().is_read)

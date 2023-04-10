@@ -1,3 +1,4 @@
+from rest_framework import exceptions
 from rest_framework import serializers as drf_serializers
 
 from sacred_garden import models
@@ -185,3 +186,20 @@ class CreateEmotionalNeedSerializer(drf_serializers.ModelSerializer):
                 instance,
                 initial_status, None, None, "", "")
         return instance
+
+
+class EmotionalLetterSerializer(drf_serializers.ModelSerializer):
+
+    class Meta:
+        model = models.EmotionalLetter
+        fields = ['text', 'appreciation_text', 'advice_text', 'sender',
+                  'recipient', 'is_read', 'created_at', 'id']
+        read_only_fields = ['sender', 'recipient', 'is_read', 'created_at', 'id']
+
+    def validate(self, attrs):
+        if not self.context['request'].user.partner_user_id:
+            raise exceptions.ValidationError('Partner is required')
+
+        attrs['sender'] = self.context['request'].user
+        attrs['recipient'] = self.context['request'].user.partner_user
+        return attrs
