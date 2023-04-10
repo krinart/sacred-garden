@@ -863,10 +863,10 @@ class TestAppreciationsAPIView(ApiTestCase):
         self.user2 = models.User.objects.create(email='user2@example.com')
         models.connect_partners(self.user1, self.user2)
 
-        eneed = models.EmotionalNeed.objects.create(user=self.user1, name='Hugs', state_value_type=0)
+        self.eneed = models.EmotionalNeed.objects.create(user=self.user1, name='Hugs', state_value_type=0)
 
-        self.ens1 = models.create_emotional_need_state(self.user1, eneed, -1, None, 0, "", "")
-        self.ens2 = models.create_emotional_need_state(self.user1, eneed, -2, None, 0, "", "love_you_2")
+        self.ens1 = models.create_emotional_need_state(self.user1, self.eneed, -1, None, 0, "", "")
+        self.ens2 = models.create_emotional_need_state(self.user1, self.eneed, -2, None, 0, "", "love_you_2")
 
         self.letter = models.EmotionalLetter.objects.create(
             sender=self.user1,
@@ -897,6 +897,7 @@ class TestAppreciationsAPIView(ApiTestCase):
                 'id': self.letter.id,
                 'appreciation_text': 'some_appreciation_text',
                 'source_entity': 'emotional_letter',
+                'emotional_need_state': None,
             })
 
         del response.data[1]['created_at']
@@ -906,4 +907,7 @@ class TestAppreciationsAPIView(ApiTestCase):
                 'id': self.ens2.id,
                 'appreciation_text': 'love_you_2',
                 'source_entity': 'emotional_need_state',
+                'emotional_need_state': {
+                    'emotional_need_id': self.eneed.id,
+                }
             })
