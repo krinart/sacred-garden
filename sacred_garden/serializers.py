@@ -208,7 +208,8 @@ class EmotionalLetterSerializer(drf_serializers.ModelSerializer):
     class Meta:
         model = models.EmotionalLetter
         fields = ['text', 'appreciation_text', 'advice_text', 'sender',
-                  'recipient', 'is_read', 'created_at', 'id', 'is_sent', 'is_received']
+                  'recipient', 'is_read', 'created_at', 'id', 'is_acknowledged',
+                  'is_sent', 'is_received']
         read_only_fields = ['sender', 'recipient', 'is_read', 'created_at', 'id']
 
     def validate(self, attrs):

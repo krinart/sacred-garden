@@ -157,6 +157,14 @@ class EmotionalLetterViewSet(mixins.ListModelMixin,
 
         return Response()
 
+    @action(detail=True, methods=['PUT'])
+    def mark_as_acknowledged(self, request, *args, **kwargs):
+        letter = self.get_object()
+        letter.is_acknowledged = True
+        letter.save()
+
+        return Response()
+
 
 class AppreciationsAPIView(drf_views.APIView):
 

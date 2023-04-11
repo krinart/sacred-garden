@@ -670,6 +670,7 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                 'sender': self.user1.id,
                 'recipient': self.user2.id,
                 'is_read': False,
+                'is_acknowledged': False,
                 'is_sent': True,
                 'is_received': False,
             }
@@ -721,6 +722,7 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                     'sender': self.user2.id,
                     'recipient': self.user1.id,
                     'is_read': False,
+                    'is_acknowledged': False,
                     'is_sent': False,
                     'is_received': True,
                 },
@@ -732,6 +734,7 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                     'sender': self.user1.id,
                     'recipient': self.user2.id,
                     'is_read': False,
+                    'is_acknowledged': False,
                     'is_sent': True,
                     'is_received': False,
                 },
@@ -768,6 +771,7 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                 'sender': self.user1.id,
                 'recipient': self.user2.id,
                 'is_read': False,
+                'is_acknowledged': False,
                 'is_sent': True,
                 'is_received': False,
             },
@@ -799,6 +803,7 @@ class TestEmotionalLetterViewSet(ApiTestCase):
                 'sender': self.user1.id,
                 'recipient': self.user2.id,
                 'is_read': False,
+                'is_acknowledged': False,
                 'is_sent': False,
                 'is_received': True,
             },
@@ -854,6 +859,41 @@ class TestEmotionalLetterViewSet(ApiTestCase):
         self.assertNotFound(response)
 
         self.assertFalse(models.EmotionalLetter.objects.get().is_read)
+
+    def test_mark_as_acknowledged_success(self):
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_put(
+            'emotionalletter-mark-as-acknowledged', urlargs=[letter.id], auth_user=self.user1)
+        self.assertSuccess(response)
+
+        self.assertTrue(models.EmotionalLetter.objects.get().is_acknowledged)
+
+    def test_mark_as_acknowledged_error(self):
+        other_user = models.User.objects.create(email='user3@example.com')
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_put(
+            'emotionalletter-mark-as-read', urlargs=[letter.id], auth_user=other_user)
+        self.assertNotFound(response)
+
+        self.assertFalse(models.EmotionalLetter.objects.get().is_acknowledged)
 
 
 class TestAppreciationsAPIView(ApiTestCase):
