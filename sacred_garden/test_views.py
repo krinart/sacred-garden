@@ -676,6 +676,44 @@ class TestEmotionalLetterViewSet(ApiTestCase):
             }
         )
 
+    def test_create_only_text_success(self):
+        models.connect_partners(self.user1, self.user2)
+
+        response = self.request_post(
+            'emotionalletter-list',
+            data={
+                'text': 'some_text',
+            },
+            auth_user=self.user1,
+        )
+        self.assertSuccess(response, expected_status_code=201)
+
+        self.assertEqual(models.EmotionalLetter.objects.count(), 1)
+
+        letter = models.EmotionalLetter.objects.get()
+        self.assertEqual(letter.sender, self.user1)
+        self.assertEqual(letter.recipient, self.user2)
+        self.assertEqual(letter.text, 'some_text')
+        self.assertEqual(letter.appreciation_text, '')
+        self.assertEqual(letter.advice_text, '')
+
+        del response.data['created_at']
+        self.assertEqual(
+            response.data,
+            {
+                'id': letter.id,
+                'text': 'some_text',
+                'appreciation_text': '',
+                'advice_text': '',
+                'sender': self.user1.id,
+                'recipient': self.user2.id,
+                'is_read': False,
+                'is_acknowledged': False,
+                'is_sent': True,
+                'is_received': False,
+            }
+        )
+
     def test_list_success(self):
         other_user = models.User.objects.create(email='user3@example.com')
         models.connect_partners(self.user1, self.user2)
