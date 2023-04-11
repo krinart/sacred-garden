@@ -933,6 +933,58 @@ class TestEmotionalLetterViewSet(ApiTestCase):
 
         self.assertFalse(models.EmotionalLetter.objects.get().is_acknowledged)
 
+    def test_delete_success(self):
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_delete(
+            'emotionalletter-detail', urlargs=[letter.id], auth_user=self.user1)
+        self.assertSuccess(response, expected_status_code=204)
+
+        self.assertEqual(models.EmotionalLetter.objects.count(), 0)
+
+    def test_delete_partner_forbidden(self):
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_delete(
+            'emotionalletter-detail', urlargs=[letter.id], auth_user=self.user2)
+        self.assertForbidden(response)
+
+        self.assertEqual(models.EmotionalLetter.objects.count(), 1)
+
+    def test_delete_other_user_not_found(self):
+        other_user = models.User.objects.create(email='user3@example.com')
+        models.connect_partners(self.user1, self.user2)
+
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_delete(
+            'emotionalletter-detail', urlargs=[letter.id], auth_user=other_user)
+        self.assertNotFound(response)
+
+        self.assertEqual(models.EmotionalLetter.objects.count(), 1)
+
 
 class TestAppreciationsAPIView(ApiTestCase):
 
