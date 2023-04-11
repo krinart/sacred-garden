@@ -76,6 +76,33 @@
     }
   },
   {
+    "model": "sacred_garden.emotionalneed",
+    "pk": 5,
+    "fields": {
+      "user": 1,
+      "name": "Work",
+      "state_value_type": 0
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneed",
+    "pk": 6,
+    "fields": {
+      "user": 2,
+      "name": "Work",
+      "state_value_type": 0
+    }
+  },
+  {
+    "model": "sacred_garden.emotionalneed",
+    "pk": 7,
+    "fields": {
+      "user": 2,
+      "name": "Kisses",
+      "state_value_type": 0
+    }
+  },
+  {
     "model": "sacred_garden.emotionalneedstate",
     "pk": 1,
     "fields": {
@@ -401,6 +428,22 @@
       "status": 0,
       "value_type": 0,
       "value_rel": 1,
+      "partner_user": 1,
+      "is_current": true,
+      "appreciation_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ultrices tincidunt arcu non sodales neque sodales ut etiam sit. In eu mi bibendum neque egestas congue quisque egestas diam. Eleifend mi in nulla posuere. Nulla facilisi morbi tempus iaculis urna id volutpat. Iaculis eu non diam phasellus. Libero nunc consequat interdum varius. At varius vel pharetra vel. Nibh tortor id aliquet lectus proin nibh nisl condimentum id. Mauris a diam maecenas sed enim ut sem viverra. Urna molestie at elementum eu facilisis. Ipsum a arcu cursus vitae congue.",
+      "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ultrices tincidunt arcu non sodales neque sodales ut etiam sit. In eu mi bibendum neque egestas congue quisque egestas diam. Eleifend mi in nulla posuere. Nulla facilisi morbi tempus iaculis urna id volutpat. Iaculis eu non diam phasellus. Libero nunc consequat interdum varius. At varius vel pharetra vel. Nibh tortor id aliquet lectus proin nibh nisl condimentum id. Mauris a diam maecenas sed enim ut sem viverra. Urna molestie at elementum eu facilisis. Ipsum a arcu cursus vitae congue.",
+      "created_at": "2023-01-19T04:40:59.987-08:00"
+    }
+  },
+
+  {
+    "model": "sacred_garden.emotionalneedstate",
+    "pk": 22,
+    "fields": {
+      "emotional_need": 7,
+      "status": 0,
+      "value_type": 0,
+      "value_rel": null,
       "partner_user": 1,
       "is_current": true,
       "appreciation_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ultrices tincidunt arcu non sodales neque sodales ut etiam sit. In eu mi bibendum neque egestas congue quisque egestas diam. Eleifend mi in nulla posuere. Nulla facilisi morbi tempus iaculis urna id volutpat. Iaculis eu non diam phasellus. Libero nunc consequat interdum varius. At varius vel pharetra vel. Nibh tortor id aliquet lectus proin nibh nisl condimentum id. Mauris a diam maecenas sed enim ut sem viverra. Urna molestie at elementum eu facilisis. Ipsum a arcu cursus vitae congue.",
