@@ -128,16 +128,12 @@ class EmotionalLetterPermission(drf_permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, letter):
-        if request.method == 'DELETE':
+        if request.method == 'DELETE' or request.method == 'PUT':
             return letter.sender == request.user
         return letter.sender == request.user or letter.recipient == request.user
 
 
-class EmotionalLetterViewSet(mixins.ListModelMixin,
-                             mixins.DestroyModelMixin,
-                             mixins.RetrieveModelMixin,
-                             mixins.CreateModelMixin,
-                             viewsets.GenericViewSet):
+class EmotionalLetterViewSet(viewsets.ModelViewSet):
 
     queryset = models.EmotionalLetter.objects.all()
     serializer_class = serializers.EmotionalLetterSerializer
