@@ -212,8 +212,8 @@ class EmotionalLetterSerializer(drf_serializers.ModelSerializer):
                   'is_sent', 'is_received']
         read_only_fields = ['sender', 'recipient', 'is_read', 'is_acknowledged', 'created_at', 'id']
         extra_kwargs = {
-            'advice_text': {'required': False},
-            'appreciation_text': {'required': False},
+            'advice_text': {'required': False, 'allow_blank': True},
+            'appreciation_text': {'required': False, 'allow_blank': True},
         }
 
     def validate(self, attrs):
