@@ -309,6 +309,8 @@ class TestRegistrationView(ApiTestCase):
 
         self.assertEqual(payload['user_id'], user.id)
 
+        self.assertEqual(models.EmotionalNeed.objects.count(), 7)
+
     def test_registration_user_not_invited(self):
         models.User.objects.create(
             email='joe@example.com',
