@@ -86,6 +86,12 @@ class EmotionalNeedState(models.Model):
         return f'{self.status}: {self.emotional_need.name} ({self.emotional_need.user})'
 
 
+def invite_user(user):
+    user.invite_code = get_new_invite_code(k=50)
+    user.is_invited = True
+    user.save()
+
+
 def create_emotional_need_state(user, eneed, status, value_abs, value_rel, text, appreciation_text):
     EmotionalNeedState.objects.filter(
         emotional_need=eneed,

@@ -10,12 +10,13 @@
       "last_name": "",
       "is_staff": true,
       "is_active": true,
-      "is_invited": true,
       "date_joined": "2023-04-02T02:03:36.188Z",
       "email": "viktor@sacredgarden.love",
       "partner_user": 2,
       "partner_name": null,
       "partner_invite_code": "HTFZ6V",
+      "is_invited": true,
+      "invite_code": null,
       "groups": [],
       "user_permissions": []
     }
@@ -31,12 +32,34 @@
       "last_name": "",
       "is_staff": true,
       "is_active": true,
-      "is_invited": true,
       "date_joined": "2023-04-02T02:03:50.400Z",
       "email": "eva@sacredgarden.love",
       "partner_user": 1,
       "partner_name": null,
       "partner_invite_code": "SSBLCO",
+      "is_invited": true,
+      "invite_code": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "sacred_garden.user",
+    "pk": 3,
+    "fields": {
+      "password": "",
+      "last_login": null,
+      "is_superuser": true,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-04-02T02:03:50.400Z",
+      "email": "joe@example.com",
+      "partner_user": 1,
+      "partner_name": null,
+      "is_invited": false,
+      "invite_code": null,
       "groups": [],
       "user_permissions": []
     }

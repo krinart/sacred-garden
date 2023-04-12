@@ -97,11 +97,12 @@ class RegistrationView(drf_views.APIView):
 
         user = generics.get_object_or_404(models.User, email=serializer.data['email'])
 
-        if not user.is_invited or user.invite_code != data['invite_code']:
+        if not user.is_invited or user.invite_code is None or user.invite_code != data['invite_code']:
             self.permission_denied(request)
 
         user.first_name = data['first_name']
         user.set_password(data['password'])
+        user.invite_code = None
         user.save()
 
         payload = jwt_payload_handler(user)
