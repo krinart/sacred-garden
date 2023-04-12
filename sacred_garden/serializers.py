@@ -264,3 +264,4 @@ class RegistrationSerializer(drf_serializers.Serializer):
     email = drf_serializers.EmailField(required=True)
     first_name = drf_serializers.CharField(required=True)
     password = drf_serializers.CharField(required=True)
+    invite_code = drf_serializers.CharField(required=True)

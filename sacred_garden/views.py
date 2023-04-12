@@ -93,13 +93,13 @@ class RegistrationView(drf_views.APIView):
     def post(self, request):
         serializer = serializers.RegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        data = serializer.data
 
         user = generics.get_object_or_404(models.User, email=serializer.data['email'])
 
-        if not user.is_invited:
+        if not user.is_invited or user.invite_code != data['invite_code']:
             self.permission_denied(request)
 
-        data = serializer.data
         user.first_name = data['first_name']
         user.set_password(data['password'])
         user.save()

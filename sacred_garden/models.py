@@ -22,6 +22,7 @@ class User(AbstractUser):
     partner_invite_code = models.CharField(max_length=50, blank=True, null=True, unique=True)
 
     is_invited = models.BooleanField(default=False)
+    invite_code = models.CharField(max_length=50, blank=True, null=True, unique=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
