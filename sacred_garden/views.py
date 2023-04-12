@@ -2,7 +2,9 @@ from itertools import chain
 
 from django.db.models import Q
 
-from rest_framework import mixins, viewsets
+from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+
+from rest_framework import generics, mixins, viewsets
 from rest_framework import permissions as drf_permissions
 from rest_framework import serializers as drf_serializers
 from rest_framework import views as drf_views
@@ -80,6 +82,32 @@ class CheckUserView(drf_views.APIView):
         return Response({
             'is_existing_user': True,
             'is_invited': user.is_invited,
+        })
+
+
+class RegistrationView(drf_views.APIView):
+
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        serializer = serializers.RegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = generics.get_object_or_404(models.User, email=serializer.data['email'])
+
+        if not user.is_invited:
+            self.permission_denied(request)
+
+        data = serializer.data
+        user.first_name = data['first_name']
+        user.set_password(data['password'])
+        user.save()
+
+        payload = jwt_payload_handler(user)
+
+        return Response({
+            'token': jwt_encode_handler(payload),
         })
 
 

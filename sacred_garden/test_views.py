@@ -1,7 +1,9 @@
+from django.contrib.auth import authenticate
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import exceptions
 from rest_framework.test import APIClient
+from rest_framework_jwt.serializers import jwt_decode_handler
 
 from sacred_garden import models
 
@@ -256,19 +258,74 @@ class TestUserViewSet(ApiTestCase):
         self.assertNoPartner(self.user1)
         self.assertNoPartner(self.user2)
 
-    def test_login_user_does_not_exist_success(self):
+
+class TestCheckUserView(ApiTestCase):
+
+    def test_check_user_does_not_exist_success(self):
         response = self.request_post('check-user', data={'email': 'joe@example.com'})
         self.assertSuccess(response, {'is_existing_user': False, 'is_invited': None})
 
-    def test_login_user_exists_not_invited_success(self):
+    def test_check_user_exists_not_invited_success(self):
         user = models.User.objects.create(email='joe@example.com', is_invited=False)
         response = self.request_post('check-user', data={'email': 'joe@example.com'})
         self.assertSuccess(response, {'is_existing_user': True, 'is_invited': False})
 
-    def test_login_user_exists_invited_success(self):
+    def test_check_user_exists_invited_success(self):
         user = models.User.objects.create(email='joe@example.com', is_invited=True)
         response = self.request_post('check-user', data={'email': 'joe@example.com'})
         self.assertSuccess(response, {'is_existing_user': True, 'is_invited': True})
+
+
+class TestRegistrationView(ApiTestCase):
+
+    def test_registration_success(self):
+        user = models.User.objects.create(email='joe@example.com', is_invited=True)
+
+        response = self.request_post(
+            'registration',
+            data={
+                'email': 'joe@example.com',
+                'first_name': 'Joe',
+                'password': 'some_password',
+            })
+        self.assertSuccess(response)
+
+        # Check authentication works for the user
+        auth_user = authenticate(email='joe@example.com', password='some_password')
+        self.assertEqual(auth_user.id, user.id)
+
+        self.assertEqual(list(response.data.keys()), ['token'])
+        payload = jwt_decode_handler(response.data['token'])
+
+        self.assertEqual(payload['user_id'], user.id)
+
+    def test_registration_user_not_invited(self):
+        models.User.objects.create(email='joe@example.com', is_invited=False)
+
+        response = self.request_post(
+            'registration',
+            data={
+                'email': 'joe@example.com',
+                'first_name': 'Joe',
+                'password': 'some_password',
+            })
+        self.assertForbidden(response)
+
+        self.assertIsNone(
+            authenticate(email='joe@example.com', password='some_password'))
+
+    def test_registration_user_does_not_exist(self):
+        response = self.request_post(
+            'registration',
+            data={
+                'email': 'joe@example.com',
+                'first_name': 'Joe',
+                'password': 'some_password',
+            })
+        self.assertNotFound(response)
+
+        self.assertIsNone(
+            authenticate(email='joe@example.com', password='some_password'))
 
 
 class TestEmotionalNeedViewSet(ApiTestCase):
