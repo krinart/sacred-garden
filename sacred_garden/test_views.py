@@ -356,6 +356,28 @@ class TestRegistrationView(ApiTestCase):
             authenticate(email='joe@example.com', password='some_password'))
 
 
+class TestJoinWaitListView(ApiTestCase):
+
+    def test_join_success(self):
+        response = self.request_post(
+            'join-wait-list', data={'email': 'joe@example.com'})
+        self.assertSuccess(response)
+
+        user = models.User.objects.get()
+        self.assertEqual(user.email, 'joe@example.com')
+        self.assertEqual(user.is_invited, False)
+        self.assertEqual(user.invite_code, None)
+        self.assertEqual(user.is_active, False)
+        self.assertEqual(user.password, "")
+
+    def test_join_email_already_exists(self):
+        models.User.objects.create(email='joe@example.com')
+
+        response = self.request_post(
+            'join-wait-list', data={'email': 'joe@example.com'})
+        self.assertForbidden(response)
+
+
 class TestEmotionalNeedViewSet(ApiTestCase):
 
     def setUp(self):

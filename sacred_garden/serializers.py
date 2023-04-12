@@ -256,7 +256,7 @@ class AppreciationSerializer(drf_serializers.Serializer):
             }
 
 
-class CheckUserSerializer(drf_serializers.Serializer):
+class EmailSerializer(drf_serializers.Serializer):
     email = drf_serializers.EmailField(required=True)
 
 

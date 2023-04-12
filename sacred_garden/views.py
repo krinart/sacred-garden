@@ -68,7 +68,7 @@ class CheckUserView(drf_views.APIView):
     permission_classes = []
 
     def post(self, request):
-        serializer = serializers.CheckUserSerializer(data=request.data)
+        serializer = serializers.EmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
@@ -83,6 +83,30 @@ class CheckUserView(drf_views.APIView):
             'is_existing_user': True,
             'is_invited': user.is_invited,
         })
+
+
+class JoinWaitListView(drf_views.APIView):
+
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        serializer = serializers.EmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+
+        email = models.User.objects.normalize_email(data['email'])
+
+        try:
+            models.User.objects.get(email=email)
+        except models.User.DoesNotExist:
+            pass
+        else:
+            self.permission_denied(request)
+
+        models.User.objects.create(email=email, is_invited=False, is_active=False)
+
+        return Response({})
 
 
 class RegistrationView(drf_views.APIView):
