@@ -74,14 +74,17 @@ class CheckUserView(drf_views.APIView):
         try:
             user = models.User.objects.get(email=serializer.data['email'])
         except models.User.DoesNotExist:
-            return Response({
-                'is_existing_user': False,
-                'is_invited': None,
-            })
+            user_status = 'NON_EXISTING'
+        else:
+            if not user.is_invited:
+                user_status = 'NOT_INVITED'
+            elif not user.is_active:
+                user_status = 'INVITED'
+            else:
+                user_status = 'ACTIVE'
 
         return Response({
-            'is_existing_user': True,
-            'is_invited': user.is_invited,
+            'user_status': user_status
         })
 
 
@@ -127,6 +130,7 @@ class RegistrationView(drf_views.APIView):
         user.first_name = data['first_name']
         user.set_password(data['password'])
         user.invite_code = None
+        user.is_active = True
         user.save()
 
         payload = jwt_payload_handler(user)

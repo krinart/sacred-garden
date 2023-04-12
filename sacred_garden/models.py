@@ -89,7 +89,6 @@ class EmotionalNeedState(models.Model):
 def invite_user(user):
     user.invite_code = get_new_invite_code(k=50)
     user.is_invited = True
-    user.is_active = True
     user.save()
 
 

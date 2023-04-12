@@ -263,17 +263,22 @@ class TestCheckUserView(ApiTestCase):
 
     def test_check_user_does_not_exist_success(self):
         response = self.request_post('check-user', data={'email': 'joe@example.com'})
-        self.assertSuccess(response, {'is_existing_user': False, 'is_invited': None})
+        self.assertSuccess(response, {'user_status': 'NON_EXISTING'})
 
     def test_check_user_exists_not_invited_success(self):
-        user = models.User.objects.create(email='joe@example.com', is_invited=False)
+        models.User.objects.create(email='joe@example.com', is_invited=False, is_active=False)
         response = self.request_post('check-user', data={'email': 'joe@example.com'})
-        self.assertSuccess(response, {'is_existing_user': True, 'is_invited': False})
+        self.assertSuccess(response, {'user_status': 'NOT_INVITED'})
 
-    def test_check_user_exists_invited_success(self):
-        user = models.User.objects.create(email='joe@example.com', is_invited=True)
+    def test_check_user_exists_invited_not_active_success(self):
+        models.User.objects.create(email='joe@example.com', is_invited=True, is_active=False)
         response = self.request_post('check-user', data={'email': 'joe@example.com'})
-        self.assertSuccess(response, {'is_existing_user': True, 'is_invited': True})
+        self.assertSuccess(response, {'user_status': 'INVITED'})
+
+    def test_check_user_registered_success(self):
+        models.User.objects.create(email='joe@example.com', is_invited=True, is_active=True)
+        response = self.request_post('check-user', data={'email': 'joe@example.com'})
+        self.assertSuccess(response, {'user_status': 'ACTIVE'})
 
 
 class TestRegistrationView(ApiTestCase):
