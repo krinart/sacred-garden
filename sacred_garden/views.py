@@ -148,6 +148,8 @@ class RegistrationView(drf_views.APIView):
             user = models.User.objects.create_user(
                 data['email'], data['password'], first_name=data['first_name'])
 
+        models.populate_new_profile(user)
+
         payload = jwt_payload_handler(user)
 
         return Response({

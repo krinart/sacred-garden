@@ -218,3 +218,22 @@ def find_emotional_need_statuses(eneed, user=None, partner_user=None):
     qs = qs.order_by('created_at')
 
     return qs
+
+
+DEFAULT_EMOTIONAL_NEEDS = [
+    'Sexual Intimacy',
+    'Emotional Intimacy',
+    'Physical Touch',
+    'Quality Time',
+    'Appreciation',
+    'Acts of Service',
+    'Gifts',
+]
+
+def populate_new_profile(user):
+    for eneed_name in DEFAULT_EMOTIONAL_NEEDS:
+        EmotionalNeed.objects.create(
+            user=user,
+            name=eneed_name,
+            state_value_type=EmotionalNeed.StateValueType.RELATIVE,
+        )
