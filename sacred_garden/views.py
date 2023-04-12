@@ -60,6 +60,29 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         return Response({})
 
 
+class CheckUserView(drf_views.APIView):
+
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        serializer = serializers.CheckUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            user = models.User.objects.get(email=serializer.data['email'])
+        except models.User.DoesNotExist:
+            return Response({
+                'is_existing_user': False,
+                'is_invited': None,
+            })
+
+        return Response({
+            'is_existing_user': True,
+            'is_invited': user.is_invited,
+        })
+
+
 class EmotionalNeedPermission(drf_permissions.BasePermission):
 
     def has_permission(self, request, view):

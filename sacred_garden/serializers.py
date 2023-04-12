@@ -254,3 +254,7 @@ class AppreciationSerializer(drf_serializers.Serializer):
             return {
                 'emotional_need_id': instance.emotional_need_id
             }
+
+
+class CheckUserSerializer(drf_serializers.Serializer):
+    email = drf_serializers.EmailField(required=True)

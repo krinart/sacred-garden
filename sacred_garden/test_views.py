@@ -256,6 +256,20 @@ class TestUserViewSet(ApiTestCase):
         self.assertNoPartner(self.user1)
         self.assertNoPartner(self.user2)
 
+    def test_login_user_does_not_exist_success(self):
+        response = self.request_post('check-user', data={'email': 'joe@example.com'})
+        self.assertSuccess(response, {'is_existing_user': False, 'is_invited': None})
+
+    def test_login_user_exists_not_invited_success(self):
+        user = models.User.objects.create(email='joe@example.com', is_invited=False)
+        response = self.request_post('check-user', data={'email': 'joe@example.com'})
+        self.assertSuccess(response, {'is_existing_user': True, 'is_invited': False})
+
+    def test_login_user_exists_invited_success(self):
+        user = models.User.objects.create(email='joe@example.com', is_invited=True)
+        response = self.request_post('check-user', data={'email': 'joe@example.com'})
+        self.assertSuccess(response, {'is_existing_user': True, 'is_invited': True})
+
 
 class TestEmotionalNeedViewSet(ApiTestCase):
 
