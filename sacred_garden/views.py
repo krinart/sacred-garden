@@ -124,12 +124,18 @@ class RegistrationView(drf_views.APIView):
 
         user = generics.get_object_or_404(models.User, email=serializer.data['email'])
 
-        if not user.is_invited or user.invite_code is None or user.invite_code != data['invite_code']:
+        # if not user.is_invited or user.invite_code is None or user.invite_code != data['invite_code']:
+
+        # User was not invited yet
+        if not user.is_invited:
+            self.permission_denied(request)
+
+        # User is already active
+        if user.is_active:
             self.permission_denied(request)
 
         user.first_name = data['first_name']
         user.set_password(data['password'])
-        user.invite_code = None
         user.is_active = True
         user.save()
 

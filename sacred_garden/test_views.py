@@ -287,6 +287,7 @@ class TestRegistrationView(ApiTestCase):
         user = models.User.objects.create(
             email='joe@example.com',
             is_invited=True,
+            is_active=False,
             invite_code='invite_code')
 
         response = self.request_post(
@@ -295,13 +296,13 @@ class TestRegistrationView(ApiTestCase):
                 'email': 'joe@example.com',
                 'first_name': 'Joe',
                 'password': 'some_password',
-                'invite_code': 'invite_code'
             })
         self.assertSuccess(response)
 
         # Check authentication works for the user
         auth_user = authenticate(email='joe@example.com', password='some_password')
         self.assertEqual(auth_user.id, user.id)
+        self.assertEqual(auth_user.is_active, True)
 
         self.assertEqual(list(response.data.keys()), ['token'])
         payload = jwt_decode_handler(response.data['token'])
@@ -311,8 +312,7 @@ class TestRegistrationView(ApiTestCase):
     def test_registration_user_not_invited(self):
         models.User.objects.create(
             email='joe@example.com',
-            is_invited=False,
-            invite_code='invite_code')
+            is_invited=False)
 
         response = self.request_post(
             'registration',
@@ -327,11 +327,11 @@ class TestRegistrationView(ApiTestCase):
         self.assertIsNone(
             authenticate(email='joe@example.com', password='some_password'))
 
-    def test_registration_invalid_invite_code(self):
+    def test_registration_user_already_active(self):
         models.User.objects.create(
             email='joe@example.com',
             is_invited=True,
-            invite_code='invite_code')
+            is_active=True)
 
         response = self.request_post(
             'registration',
@@ -339,7 +339,6 @@ class TestRegistrationView(ApiTestCase):
                 'email': 'joe@example.com',
                 'first_name': 'Joe',
                 'password': 'some_password',
-                'invite_code': 'invalid_invite_code',
             })
         self.assertForbidden(response)
 
@@ -353,7 +352,6 @@ class TestRegistrationView(ApiTestCase):
                 'email': 'joe@example.com',
                 'first_name': 'Joe',
                 'password': 'some_password',
-                'invite_code':'invite_code',
             })
         self.assertNotFound(response)
 

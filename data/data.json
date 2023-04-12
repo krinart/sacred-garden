@@ -56,9 +56,30 @@
       "is_active": false,
       "date_joined": "2023-04-02T02:03:50.400Z",
       "email": "joe@sacredgarden.love",
-      "partner_user": 1,
+      "partner_user": null,
       "partner_name": null,
       "is_invited": false,
+      "invite_code": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "sacred_garden.user",
+    "pk": 4,
+    "fields": {
+      "password": "",
+      "last_login": null,
+      "is_superuser": true,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "is_active": false,
+      "date_joined": "2023-04-02T02:03:50.400Z",
+      "email": "invited@sacredgarden.love",
+      "partner_user": null,
+      "partner_name": null,
+      "is_invited": true,
       "invite_code": null,
       "groups": [],
       "user_permissions": []
