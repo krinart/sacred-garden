@@ -15,6 +15,9 @@ from sacred_garden import models
 from sacred_garden import serializers
 
 
+INVITES_ENABLED = True
+
+
 class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
     queryset = models.User.objects.all()
@@ -74,7 +77,10 @@ class CheckUserView(drf_views.APIView):
         try:
             user = models.User.objects.get(email=serializer.data['email'])
         except models.User.DoesNotExist:
-            user_status = 'NON_EXISTING'
+            if INVITES_ENABLED:
+                user_status = 'NON_EXISTING'
+            else:
+                user_status = 'INVITED'
         else:
             if not user.is_invited:
                 user_status = 'NOT_INVITED'
@@ -122,22 +128,25 @@ class RegistrationView(drf_views.APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.data
 
-        user = generics.get_object_or_404(models.User, email=serializer.data['email'])
+        if INVITES_ENABLED:
+            user = generics.get_object_or_404(models.User, email=serializer.data['email'])
 
-        # if not user.is_invited or user.invite_code is None or user.invite_code != data['invite_code']:
+            # User was not invited yet
+            if not user.is_invited:
+                self.permission_denied(request)
 
-        # User was not invited yet
-        if not user.is_invited:
-            self.permission_denied(request)
+            # User is already active
+            if user.is_active:
+                self.permission_denied(request)
 
-        # User is already active
-        if user.is_active:
-            self.permission_denied(request)
+            user.first_name = data['first_name']
+            user.set_password(data['password'])
+            user.is_active = True
+            user.save()
 
-        user.first_name = data['first_name']
-        user.set_password(data['password'])
-        user.is_active = True
-        user.save()
+        else:
+            user = models.User.objects.create_user(
+                data['email'], data['password'], first_name=data['first_name'])
 
         payload = jwt_payload_handler(user)
 
