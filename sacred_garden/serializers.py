@@ -32,7 +32,7 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
         read_only_fields = ['id']
         extra_kwargs = {
             'text': {'required': True},
-            'appreciation_text': {'required': True},
+            'appreciation_text': {'allow_blank': True},
         }
 
     def get_is_initial_state(self, instance):
@@ -55,10 +55,10 @@ class EmotionalNeedStateSerializer(drf_serializers.ModelSerializer):
         return attrs
 
     def validate_emotional_need_id(self, value):
-        if value.state_value_type == models.EmotionalNeed.StateValueType.ABSOLUTE:
-            self.fields['value_abs'].required = True
-        else:
-            self.fields['value_rel'].required = True
+        # if value.state_value_type == models.EmotionalNeed.StateValueType.ABSOLUTE:
+        #     self.fields['value_abs'].required = True
+        # else:
+        #     self.fields['value_rel'].required = True
 
         return value
 
@@ -103,7 +103,8 @@ class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.EmotionalNeed
-        fields = ['id', 'name', 'current_state', 'state_value_type']
+        fields = ['id', 'name', 'current_state', 'state_value_type', 'user']
+        read_only_fields = ['user']
 
 
 class PartnerSerializer(drf_serializers.ModelSerializer):

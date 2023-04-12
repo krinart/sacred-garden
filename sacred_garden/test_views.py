@@ -365,7 +365,8 @@ class TestEmotionalNeedViewSet(ApiTestCase):
                     'value_rel': 0,
                     'text': '',
                     'appreciation_text': '',
-                }
+                },
+                'user': eneed.user_id,
             }
         )
 
@@ -399,7 +400,8 @@ class TestEmotionalNeedViewSet(ApiTestCase):
                     'is_initial_state': False,
                     'text': '',
                     'appreciation_text': '',
-                }
+                },
+                'user': eneed.user_id,
             }
         )
 

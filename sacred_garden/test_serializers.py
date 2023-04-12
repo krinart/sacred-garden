@@ -1,3 +1,5 @@
+import unittest
+
 from django.test import TestCase
 from rest_framework import exceptions as drf_exceptions
 
@@ -35,6 +37,7 @@ class TestEmotionalNeedSerializer(TestCase):
             eneed1_data = {
                 'id': eneed1.id,
                 'name': 'Hug',
+                'user': user.id,
                 'state_value_type': 1,
                 'current_state': {
                     'id': ens1.id,
@@ -51,6 +54,7 @@ class TestEmotionalNeedSerializer(TestCase):
 
             eneed2_data = {
                 'id': eneed2.id,
+                'user': user.id,
                 'name': 'Kiss',
                 'state_value_type': 0,
                 'current_state': {
@@ -164,6 +168,7 @@ class TestEmotionalNeedStateSerializer(TestCase):
             }
         )
 
+    @unittest.skip('Removed')
     def test_write_relative_requires_value_rel(self):
         data = {
             'emotional_need_id': self.eneed_relative.id,
@@ -181,6 +186,7 @@ class TestEmotionalNeedStateSerializer(TestCase):
             {'value_rel': [drf_exceptions.ErrorDetail(string='This field is required.', code='required')]}
         )
 
+    @unittest.skip('Removed')
     def test_write_absolute_requires_value_abs(self):
         data = {
             'emotional_need_id': self.eneed_absolute.id,
