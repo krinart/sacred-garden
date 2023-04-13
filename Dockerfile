@@ -1,4 +1,4 @@
-FROM python:3.11.2
+FROM python:3.11.2-alpine
 
 EXPOSE 8000
 
@@ -8,6 +8,10 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+
+# install psycopg2 dependencies
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev
 
 # install dependencies
 RUN pip install --upgrade pip
@@ -20,4 +24,5 @@ COPY . .
 # Prepare fixtures
 #RUN make db
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Defined in docker-compose
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

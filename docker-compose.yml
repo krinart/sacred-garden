@@ -11,14 +11,16 @@ services:
     env_file:
       - ./.env.dev
 
-#  db:
-#    image: postgres:13.0-alpine
-#    volumes:
-#    - postgres_data:/var/lib/postgresql/data/
-#    environment:
-#    - POSTGRES_USER=me
-#    - POSTGRES_PASSWORD=me
-#    - POSTGRES_DB=sg
-#
-#volumes:
-#  postgres_data:
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+    - postgres_data:/var/lib/postgresql/data/
+    environment:
+    - POSTGRES_USER=me
+    - POSTGRES_PASSWORD=me
+    - POSTGRES_DB=sg
+    ports:
+      - 5432:5432
+
+volumes:
+  postgres_data:

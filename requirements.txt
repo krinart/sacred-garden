@@ -6,3 +6,4 @@ djangorestframework-jwt==1.11.0
 ipdb==0.13.13
 ipython==8.11.0
 pytz==2022.7.1
+psycopg2-binary==2.9.6
