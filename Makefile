@@ -7,4 +7,10 @@ dbuild:
 	docker build . -t sacredgarden
 
 drun:
-	docker run -p 8080:8000 sacredgarden
+	docker run -p 8000:8000 sacredgarden
+
+cbuild:
+	docker-compose build
+
+crun:
+	docker-compose up -d
