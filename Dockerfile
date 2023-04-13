@@ -18,6 +18,6 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Prepare fixtures
-RUN make db
+#RUN make db
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

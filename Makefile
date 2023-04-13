@@ -1,3 +1,6 @@
+run:
+	DEBUG=1 python manage.py runserver
+
 db:
 	rm db.sqlite3
 	python manage.py migrate
