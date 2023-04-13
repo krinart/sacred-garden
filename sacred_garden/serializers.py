@@ -218,11 +218,21 @@ class EmotionalLetterSerializer(drf_serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        if not self.context['request'].user.partner_user_id:
-            raise exceptions.ValidationError('Partner is required')
+        request = self.context['request']
+
+        if request.method == 'POST':
+            if not request.user.partner_user_id:
+                raise exceptions.ValidationError('Partner is required')
+
+            # When creating use current partner as a recipient
+            attrs['recipient'] = self.context['request'].user.partner_user
+
+        if request.method == 'PUT' or request.method == 'PATCH':
+            # When editing use original recipient
+            attrs['recipient'] = self.instance.recipient
 
         attrs['sender'] = self.context['request'].user
-        attrs['recipient'] = self.context['request'].user.partner_user
+
         return attrs
 
     def get_is_sent(self, instance):

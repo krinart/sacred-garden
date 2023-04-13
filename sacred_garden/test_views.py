@@ -1161,6 +1161,52 @@ class TestEmotionalLetterViewSet(ApiTestCase):
             }
         )
 
+    def test_update_success_with_partner_disconnect(self):
+        letter = models.EmotionalLetter.objects.create(
+            sender=self.user1,
+            recipient=self.user2,
+            text='some_text',
+            appreciation_text='some_appreciation_text',
+            advice_text='some_advice_text',
+        )
+
+        response = self.request_put(
+            'emotionalletter-detail',
+            urlargs=[letter.id],
+            data={
+                'text': 'some_text_2',
+                'appreciation_text': 'some_appreciation_text_2',
+                'advice_text': 'some_advice_text_2',
+
+            },
+            auth_user=self.user1,
+        )
+        self.assertSuccess(response)
+
+        letter = models.EmotionalLetter.objects.get()
+        self.assertEqual(letter.sender, self.user1)
+        self.assertEqual(letter.recipient, self.user2)
+        self.assertEqual(letter.text, 'some_text_2')
+        self.assertEqual(letter.appreciation_text, 'some_appreciation_text_2')
+        self.assertEqual(letter.advice_text, 'some_advice_text_2')
+
+        del response.data['created_at']
+        self.assertEqual(
+            response.data,
+            {
+                'id': letter.id,
+                'text': 'some_text_2',
+                'appreciation_text': 'some_appreciation_text_2',
+                'advice_text': 'some_advice_text_2',
+                'sender': self.user1.id,
+                'recipient': self.user2.id,
+                'is_read': False,
+                'is_acknowledged': False,
+                'is_sent': True,
+                'is_received': False,
+            }
+        )
+
     def test_update_only_text_success(self):
         models.connect_partners(self.user1, self.user2)
 
