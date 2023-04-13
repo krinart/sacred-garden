@@ -2,18 +2,15 @@ run:
 	DEBUG=1 python manage.py runserver
 
 db:
-	rm db.sqlite3
+	python manage.py flush --no-input
 	python manage.py migrate
 	python manage.py loaddata data/data.json
-
-dbuild:
-	docker build . -t sacredgarden
-
-drun:
-	docker run -p 8000:8000 sacredgarden
 
 cbuild:
 	docker-compose build
 
-crun:
+pg:
 	docker-compose up -d
+
+bprod:
+	docker-compose -f docker-compose.prod.yml up -d --build

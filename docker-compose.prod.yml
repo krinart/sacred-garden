@@ -1,0 +1,15 @@
+version: '1'
+
+name: sacred-garden-prod
+
+services:
+
+  api:
+    build: .
+    command: gunicorn sacred_garden_server.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - 9000:8000
+    env_file:
+      - ./.env.prod
