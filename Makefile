@@ -14,3 +14,7 @@ pg:
 
 bprod:
 	docker-compose -f docker-compose.prod.yml up -d --build
+
+dpush:
+	docker tag sacred-garden-api:latest krinart/sacred-garden-api:latest
+	docker push krinart/sacred-garden-api

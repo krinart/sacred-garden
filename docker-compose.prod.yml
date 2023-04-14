@@ -1,6 +1,6 @@
 version: '1'
 
-name: sacred-garden-prod
+name: "sacred-garden"
 
 services:
 
