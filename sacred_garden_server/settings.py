@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'sacred_garden_server.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
         "NAME": os.environ.get("SQL_DATABASE", "sg"),
         "USER": os.environ.get("SQL_USER", "me"),
         "PASSWORD": os.environ.get("SQL_PASSWORD", "me"),
@@ -153,9 +153,11 @@ REST_FRAMEWORK = {
     ),
 }
 
-CORS_ALLOWED_ORIGINS = [
-   "http://localhost:4200",
-]
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    "DJANGO_CORS_ALLOWED_ORIGINS",
+    "http://localhost:4200",
+).split(" ")
+
 
 AUTH_USER_MODEL = "sacred_garden.User"
 
