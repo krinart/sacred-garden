@@ -166,3 +166,5 @@ from django.utils.encoding import smart_str
 from django.utils.translation import gettext
 django.utils.encoding.smart_text = smart_str
 django.utils.translation.ugettext = gettext
+
+STATIC_ROOT = "static/"
