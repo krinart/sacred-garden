@@ -66,6 +66,18 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
         return Response({})
 
+    @action(detail=True, methods=['POST'])
+    def change_password(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = serializers.ChangePasswordSerializer(data=request.data)
+        serializer.is_valid()
+
+        user.set_password(serializer.data['password'])
+        user.save()
+
+        return Response()
+
+
 
 class CheckUserView(drf_views.APIView):
 

@@ -266,6 +266,10 @@ class AppreciationSerializer(drf_serializers.Serializer):
             }
 
 
+class ChangePasswordSerializer(drf_serializers.Serializer):
+    password = drf_serializers.CharField(required=True)
+
+
 class EmailSerializer(drf_serializers.Serializer):
     email = drf_serializers.EmailField(required=True)
 

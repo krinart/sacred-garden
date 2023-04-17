@@ -262,6 +262,34 @@ class TestUserViewSet(ApiTestCase):
         self.assertNoPartner(self.user1)
         self.assertNoPartner(self.user2)
 
+    def test_change_password_success(self):
+        self.user1.set_password('old_password')
+        self.user1.save()
+
+        response = self.request_post(
+            'user-change-password',
+            urlargs=[self.user1.id],
+            data={'password': 'new_password'},
+            auth_user=self.user1,
+        )
+        self.assertSuccess(response)
+
+        auth_user = authenticate(email='user1@example.com', password='new_password')
+        self.assertEqual(auth_user.id, self.user1.id)
+
+    def test_change_password_unauthenticated(self):
+        self.user1.set_password('old_password')
+        self.user1.save()
+
+        response = self.request_post(
+            'user-change-password',
+            urlargs=[self.user1.id],
+            data={'password': 'new_password'},
+        )
+        self.assertUnAuthorized(response)
+
+        self.assertIsNone(authenticate(email='user1@example.com', password='new_password'))
+
 
 class TestCheckUserView(ApiTestCase):
 
