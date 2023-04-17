@@ -10,7 +10,7 @@ def send_reset_password(request, user):
     token_generator = PasswordResetTokenGenerator()
     token = token_generator.make_token(user)
 
-    query = urlencode({'user_id': user.id, 'token': token})
+    query = urlencode({'userId': user.id, 'resetPasswordToken': token})
     link = request.build_absolute_uri(f'/reset-password?{query}')
 
     send_mail(
