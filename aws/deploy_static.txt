@@ -1,0 +1,18 @@
+cp -R ../sacred-garden-web/dist/sacred-garden-web www
+
+rm www/3rdpartylicenses.txt www/favicon.ico
+
+aws s3 mb s3://sg-web-bucket-for-artifacts --region us-east-1
+
+aws cloudformation package \
+    --region us-east-1 \
+    --template-file templates/main.yaml \
+    --s3-bucket sg-web-bucket-for-artifacts \
+    --output-template-file packaged.template
+
+aws cloudformation deploy \
+    --region us-east-1 \
+    --stack-name amazon-cloudfront-secure-static-site-templates-main \
+    --template-file packaged.template \
+    --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+    --parameter-overrides DomainName=sacredgarden.love SubDomain=www

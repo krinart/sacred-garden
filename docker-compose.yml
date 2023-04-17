@@ -1,15 +1,13 @@
 version: '1'
 
-name: sacred-garden-local
+name: "sacred-garden-test"
 
 services:
 
   api:
-    build: .
-    volumes:
-    - .:/usr/src/app/
+    image: krinart/sacred-garden-api:latest
     ports:
-    - 9000:8000
+      - 8000:8000
     env_file:
     - ./.env.dev
 
@@ -22,7 +20,7 @@ services:
     - POSTGRES_PASSWORD=me
     - POSTGRES_DB=sg
     ports:
-      - 5432:5432
+    - 5432:5432
 
 volumes:
   postgres_data:

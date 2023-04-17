@@ -1,0 +1,20 @@
+[Unit]
+Description=Gunicorn instance to serve sacred_garden
+After=network.target
+
+[Service]
+User=bitnami
+Group=www-data
+WorkingDirectory=/home/bitnami/sacred-garden
+Environment=DJANGO_ALLOWED_HOSTS=api.sacredgarden.love
+Environment=DJANGO_CORS_ALLOWED_ORIGINS=http://sacredgarden.love
+Environment=SQL_ENGINE=django.db.backends.postgresql
+Environment=SQL_USER=dbmasteruser
+Environment=SQL_PASSWORD="sv23t02i5G!"
+Environment=SQL_DATABASE=sacred_garden_api
+Environment=SQL_HOST=ls-94cc5541b25233f135fb50b7b3872d2974734af2.czralkya9hre.us-west-2.rds.amazonaws.com
+Environment=SQL_PORT=5432
+ExecStart=/home/bitnami/sacred-garden/.venv/bin/gunicorn sacred_garden_server.wsgi --bind 0.0.0.0:8000 --workers 4 --error-logfile /var/log/gunicorn/error.log
+
+[Install]
+WantedBy=multi-user.target

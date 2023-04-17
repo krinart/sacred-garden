@@ -28,7 +28,7 @@ SECRET_KEY = SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(" ")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]").split(" ")
 if ALLOWED_HOSTS == ['']:
     ALLOWED_HOSTS = []
 
@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'sacred_garden_server.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
         "NAME": os.environ.get("SQL_DATABASE", "sg"),
         "USER": os.environ.get("SQL_USER", "me"),
         "PASSWORD": os.environ.get("SQL_PASSWORD", "me"),

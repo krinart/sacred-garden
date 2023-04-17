@@ -1,0 +1,147 @@
+https://aws.amazon.com/blogs/containers/authenticating-with-docker-hub-for-aws-container-services/
+
+> aws kms create-key --query KeyMetadata.Arn --output text
+arn:aws:kms:us-west-2:418736265398:key/3507bd4a-dcb2-4507-8952-4cf78debe902
+
+
+> aws kms create-alias --alias-name alias/master_key --target-key-id arn:aws:kms:us-west-2:418736265398:key/3507bd4a-dcb2-4507-8952-4cf78debe902
+
+
+> aws secretsmanager create-secret \
+--name dev/DockerHubSecret \
+--description "Docker Hub Secret" \
+--kms-key-id alias/master_key \
+--secret-string '{"username":"","password”:”}'
+
+{
+    "ARN": "arn:aws:secretsmanager:us-west-2:418736265398:secret:dev/DockerHubSecret-rQsdqW",
+    "Name": "dev/DockerHubSecret",
+    "VersionId": "5bfe9ba6-002c-43bf-bb17-3d05992e826b"
+}
+
+> aws iam create-role \
+--role-name ecsTaskExecutionRole \
+--assume-role-policy-document file://ecs-trust-policy.json
+
+{
+    "Role": {
+        "Path": "/",
+        "RoleName": "ecsTaskExecutionRole",
+        "RoleId": "AROAWC7VALC3BB5SVRKX5",
+        "Arn": "arn:aws:iam::418736265398:role/ecsTaskExecutionRole",
+        "CreateDate": "2023-04-15T03:53:21+00:00",
+        "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Service": "ecs-tasks.amazonaws.com"
+                    },
+                    "Action": "sts:AssumeRole"
+                }
+            ]
+        }
+    }
+}
+
+
+> aws iam attach-role-policy \
+--role-name ecsTaskExecutionRole \
+--policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+
+> aws iam put-role-policy \
+--role-name ecsTaskExecutionRole \
+--policy-name ECS-SecretsManager-Permission \
+--policy-document file://ecs-secret-permission.json
+
+> ecs-cli configure profile \
+--access-key AKIAWC7VALC3PCTQRFVU \
+--secret-key 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 \
+—profile-name ecs_krinart_profile
+
+INFO[0000] Saved ECS CLI profile configuration default.
+
+
+> ecs-cli up \
+--cluster sg-prod \
+--region us-west-2 \
+--launch-type FARGATE
+
+VPC created: vpc-0f13f861691d7296b
+Subnet created: subnet-0b8adefde48634709
+Subnet created: subnet-0eff0d58e748a558e
+
+> aws ec2 describe-security-groups \
+--filters Name=vpc-id,Values=vpc-0f13f861691d7296b \
+--region us-west-2
+
+{
+    "SecurityGroups": [
+        {
+            "Description": "default VPC security group",
+            "GroupName": "default",
+            "IpPermissions": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0739ab7bedc5afe01",
+                            "UserId": "418736265398"
+                        }
+                    ]
+                }
+            ],
+            "OwnerId": "418736265398",
+            "GroupId": "sg-0739ab7bedc5afe01",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "VpcId": "vpc-0f13f861691d7296b"
+        }
+    ]
+}
+
+> aws ec2 authorize-security-group-ingress \
+--group-id sg-0739ab7bedc5afe01 \
+--protocol tcp \
+--port 80 \
+--cidr 0.0.0.0/0 \
+--region us-west-2
+
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0dbc599c6a6071a60",
+            "GroupId": "sg-0739ab7bedc5afe01",
+            "GroupOwnerId": "418736265398",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIpv4": "0.0.0.0/0"
+        }
+    ]
+}
+
+
+> ecs-cli compose \
+--project-name sacredgarden-api-prod \
+--cluster sacredgarden-api-prod \
+service up \
+--launch-type FARGATE

@@ -1,0 +1,20 @@
+version: 1
+task_definition:
+  task_execution_role: ecsTaskExecutionRole
+  ecs_network_mode: awsvpc
+  task_size:
+    mem_limit: 0.5GB
+    cpu_limit: 256
+  services:
+    api:
+        repository_credentials:
+            credentials_parameter: "arn:aws:secretsmanager:us-west-2:418736265398:secret:dev/DockerHubSecret-rQsdqW"
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - "subnet-07a134f32a08336fb"
+        - "subnet-01baa0c4c57f14ebf"
+      security_groups:
+        - "sg-0808be29c7e736f6a"
+      assign_public_ip: ENABLED
