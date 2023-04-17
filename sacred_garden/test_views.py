@@ -303,6 +303,9 @@ class TestRegistrationView(ApiTestCase):
         auth_user = authenticate(email='joe@example.com', password='some_password')
         self.assertEqual(auth_user.id, user.id)
         self.assertEqual(auth_user.is_active, True)
+        self.assertEqual(auth_user.email, 'joe@example.com')
+        self.assertEqual(auth_user.first_name, 'Joe')
+        self.assertTrue('pbkdf2_sha256$' in auth_user.password)
 
         self.assertEqual(list(response.data.keys()), ['token'])
         payload = jwt_decode_handler(response.data['token'])
