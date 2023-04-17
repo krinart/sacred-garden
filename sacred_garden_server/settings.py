@@ -168,3 +168,5 @@ django.utils.encoding.smart_text = smart_str
 django.utils.translation.ugettext = gettext
 
 STATIC_ROOT = "static/"
+
+PASSWORD_RESET_FROM_EMAIL = "no-reply@sacredgarden.love"

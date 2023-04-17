@@ -270,6 +270,12 @@ class EmailSerializer(drf_serializers.Serializer):
     email = drf_serializers.EmailField(required=True)
 
 
+class PasswordResetSerializer(drf_serializers.Serializer):
+    user_id = drf_serializers.IntegerField(required=True)
+    token = drf_serializers.CharField(required=True)
+    password = drf_serializers.CharField(required=True)
+
+
 class RegistrationSerializer(drf_serializers.Serializer):
     email = drf_serializers.EmailField(required=True)
     first_name = drf_serializers.CharField(required=True)

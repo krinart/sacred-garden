@@ -1,5 +1,6 @@
 from itertools import chain
 
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.db.models import Q
 
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
@@ -11,6 +12,7 @@ from rest_framework import views as drf_views
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from sacred_garden import emails
 from sacred_garden import models
 from sacred_garden import serializers
 
@@ -92,6 +94,46 @@ class CheckUserView(drf_views.APIView):
         return Response({
             'user_status': user_status
         })
+
+
+class RequestResetPassword(drf_views.APIView):
+
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        serializer = serializers.EmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+
+        user = generics.get_object_or_404(models.User, email=data['email'])
+        token = emails.send_reset_password(request, user)
+
+        # TODO: remove
+        return Response({
+            'token': token
+        })
+
+
+class ResetPassword(drf_views.APIView):
+
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        serializer = serializers.PasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+
+        user = generics.get_object_or_404(models.User, id=data['user_id'])
+        token_generator = PasswordResetTokenGenerator()
+        if not token_generator.check_token(user, data['token']):
+            self.permission_denied(request)
+
+        user.set_password(data['password'])
+        user.save()
+
+        return Response()
 
 
 class JoinWaitListView(drf_views.APIView):

@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import exceptions
@@ -6,6 +8,8 @@ from rest_framework.test import APIClient
 from rest_framework_jwt.serializers import jwt_decode_handler
 
 from sacred_garden import models
+
+from unittest import mock
 
 
 class ApiTestCase(TestCase):
@@ -279,6 +283,79 @@ class TestCheckUserView(ApiTestCase):
         models.User.objects.create(email='joe@example.com', is_invited=True, is_active=True)
         response = self.request_post('check-user', data={'email': 'joe@example.com'})
         self.assertSuccess(response, {'user_status': 'ACTIVE'})
+
+
+class TestRequestResetPassword(ApiTestCase):
+
+    @mock.patch('sacred_garden.emails.send_mail')
+    def test_success(self, mocked_send_mail):
+        models.User.objects.create(email='user1@example.com')
+
+        response = self.request_post(
+            'request-password-reset',
+            data={'email': 'user1@example.com'},
+        )
+
+        self.assertSuccess(response)
+
+        mocked_send_mail.assert_called_with(
+            "Sacred Garden: Account password reset",
+            mock.ANY,
+            settings.PASSWORD_RESET_FROM_EMAIL,
+            ["user1@example.com"],
+            fail_silently=True,
+        )
+
+    @mock.patch('sacred_garden.emails.send_mail')
+    def test_user_not_found(self, mocked_send_mail):
+        response = self.request_post(
+            'request-password-reset',
+            data={'email': 'user1@example.com'},
+        )
+
+        self.assertNotFound(response)
+
+        mocked_send_mail.assert_not_called()
+
+
+class TestResetPassword(ApiTestCase):
+
+    def test_success(self):
+        user = models.User.objects.create(email='user1@example.com')
+        user.set_password('old_password')
+        user.save()
+
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(user)
+
+        response = self.request_post(
+            'reset-password',
+            data={'token': token, 'user_id': user.id, 'password': 'new_password'},
+        )
+
+        self.assertSuccess(response)
+
+        self.assertIsNone(authenticate(email='user1@example.com', password='old_password'))
+
+        auth_user = authenticate(email='user1@example.com', password='new_password')
+        self.assertEqual(auth_user.id, user.id)
+
+    def test_invalid_token(self):
+        user = models.User.objects.create(email='user1@example.com')
+        user.set_password('old_password')
+        user.save()
+
+        response = self.request_post(
+            'reset-password',
+            data={'token': 'some_token', 'user_id': user.id, 'password': 'new_password'},
+        )
+
+        self.assertForbidden(response)
+
+        self.assertIsNone(authenticate(email='user1@example.com', password='new_password'))
+
+        auth_user = authenticate(email='user1@example.com', password='old_password')
+        self.assertEqual(auth_user.id, user.id)
 
 
 class TestRegistrationView(ApiTestCase):
