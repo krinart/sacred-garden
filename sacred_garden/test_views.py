@@ -708,6 +708,25 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(updated_eneed.name, 'hugs')
         self.assertEqual(updated_eneed.user, self.user)
 
+    def test_delete_success(self):
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
+
+        response = self.request_delete(
+            'emotionalneed-detail', urlargs=[eneed.id], auth_user=self.user)
+        self.assertSuccess(response, expected_status_code=204)
+
+        self.assertEqual(models.EmotionalNeed.objects.count(), 0)
+
+    def test_delete_unauthorized(self):
+        other_user = models.User.objects.create(email='joe@example.com')
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
+
+        response = self.request_delete(
+            'emotionalneed-detail', urlargs=[eneed.id], auth_user=other_user)
+        self.assertForbidden(response)
+
+        self.assertEqual(models.EmotionalNeed.objects.count(), 1)
+
 
 class TestEmotionalNeedStateViewSet(ApiTestCase):
 
