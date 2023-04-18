@@ -54,6 +54,11 @@ def clean_sample_user_data(user):
         recipient__is_sample=True,
     ).delete()
 
+    models.EmotionalLetter.objects.filter(
+        sender__is_sample=True,
+        recipient=user,
+    ).delete()
+
     user.has_sample_data = False
     user.save()
 
@@ -202,9 +207,32 @@ def create_partner_emotional_need_states(eneed_sample_user, user):
 
 
 def create_self_sample_emotional_letters(user, sample_user):
-    pass
+    l = models.EmotionalLetter.objects.create(
+        sender=user,
+        recipient=sample_user,
+        appreciation_text="qweasdkvblaskjbv sdlkjfhsa lkdfhasdlkfhsaldk fhalskhf lakjsdh flkasd glsakfgl as",
+        text="qweladkf lskv silufh wileufh siudfh sidufh sidufh isdu fh isudfh sidf skdjbf skdj",
+        advice_text="qwe;ksdkjb skljf sdklhf  klhfksd hfkldh fkjsd",
+        is_read=True,
+        is_acknowledged=False,
+    )
+
+    l.created_at = datetime.now() - timedelta(days=10)
+    l.save()
+
 
 
 def create_partner_sample_emotional_letters(user, sample_user):
-    pass
+    l = models.EmotionalLetter.objects.create(
+        sender=sample_user,
+        recipient=user,
+        appreciation_text="qweasdkvblaskjbv sdlkjfhsa lkdfhasdlkfhsaldk fhalskhf lakjsdh flkasd glsakfgl as",
+        text="qweladkf lskv silufh wileufh siudfh sidufh sidufh isdu fh isudfh sidf skdjbf skdj",
+        advice_text="qwe;ksdkjb skljf sdklhf  klhfksd hfkldh fkjsd",
+        is_read=True,
+        is_acknowledged=False,
+    )
+
+    l.created_at = datetime.now() - timedelta(days=20)
+    l.save()
 
