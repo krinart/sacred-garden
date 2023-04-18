@@ -667,6 +667,47 @@ class TestEmotionalNeedViewSet(ApiTestCase):
             'emotionalneed-detail', urlargs=[eneed.id], auth_user=self.partner)
         self.assertForbidden(response)
 
+    def test_update_name_success(self):
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
+
+        response = self.request_put(
+            'emotionalneed-detail', urlargs=[eneed.id], data={'name': 'more_hugs'}, auth_user=self.user)
+        self.assertSuccess(response)
+
+        self.assertEqual(
+            models.EmotionalNeed.objects.get(id=eneed.id).name,
+            'more_hugs')
+
+    def test_update_user_does_not_work(self):
+        other_user = models.User.objects.create(email='joe@example.com')
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
+
+        response = self.request_put(
+            'emotionalneed-detail',
+            urlargs=[eneed.id],
+            data={'name': 'more_hugs', 'user': other_user.id, 'user_id': other_user.id},
+            auth_user=self.user)
+        self.assertSuccess(response)
+
+        updated_eneed = models.EmotionalNeed.objects.get(id=eneed.id)
+        self.assertEqual(updated_eneed.name, 'more_hugs')
+        self.assertEqual(updated_eneed.user, self.user)
+
+    def test_update_unauthorized(self):
+        other_user = models.User.objects.create(email='joe@example.com')
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
+
+        response = self.request_put(
+            'emotionalneed-detail',
+            urlargs=[eneed.id],
+            data={'name': 'more_hugs', 'user': other_user.id, 'user_id': other_user.id},
+            auth_user=other_user)
+        self.assertForbidden(response)
+
+        updated_eneed = models.EmotionalNeed.objects.get(id=eneed.id)
+        self.assertEqual(updated_eneed.name, 'hugs')
+        self.assertEqual(updated_eneed.user, self.user)
+
 
 class TestEmotionalNeedStateViewSet(ApiTestCase):
 

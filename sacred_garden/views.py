@@ -226,7 +226,7 @@ class EmotionalNeedPermission(drf_permissions.BasePermission):
         return False
 
 
-class EmotionalNeedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class EmotionalNeedViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
     queryset = models.EmotionalNeed.objects.all()
     serializer_class = serializers.EmotionalNeedSerializer

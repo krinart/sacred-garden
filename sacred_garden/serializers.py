@@ -98,13 +98,14 @@ def get_abs_value(ens, ens_prev):
 
 
 class EmotionalNeedSerializer(drf_serializers.ModelSerializer):
+    """Used to read/update. To create CreateEmotionalNeedSerializer is used."""
 
-    current_state = EmotionalNeedStateSerializer()
+    current_state = EmotionalNeedStateSerializer(read_only=True)
 
     class Meta:
         model = models.EmotionalNeed
         fields = ['id', 'name', 'current_state', 'state_value_type', 'user']
-        read_only_fields = ['user']
+        read_only_fields = ['state_value_type', 'user']
 
 
 class PartnerSerializer(drf_serializers.ModelSerializer):
