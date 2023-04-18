@@ -249,13 +249,11 @@ class EmotionalNeedPermission(drf_permissions.BasePermission):
 
     def has_object_permission(self, request, view, eneed):
 
-        if eneed.user.is_sample:
-            return True
+        if request.method == 'GET':
+            if eneed.user.partner_user == request.user or eneed.user.is_sample:
+                return True
 
         if eneed.user == request.user:
-            return True
-
-        if eneed.user.partner_user == request.user:
             return True
 
         return False

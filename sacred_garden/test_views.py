@@ -696,6 +696,21 @@ class TestEmotionalNeedViewSet(ApiTestCase):
         self.assertEqual(updated_eneed.name, 'more_hugs')
         self.assertEqual(updated_eneed.user, self.user)
 
+    def test_update_as_partner_is_forbidden(self):
+        models.connect_partners(self.user, self.partner)
+
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
+
+        response = self.request_put(
+            'emotionalneed-detail',
+            urlargs=[eneed.id],
+            data={'name': 'more_hugs'},
+            auth_user=self.partner)
+        self.assertForbidden(response)
+
+        updated_eneed = models.EmotionalNeed.objects.get(id=eneed.id)
+        self.assertEqual(updated_eneed.name, 'hugs')
+
     def test_update_unauthorized(self):
         other_user = models.User.objects.create(email='joe@example.com')
         eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
@@ -726,6 +741,19 @@ class TestEmotionalNeedViewSet(ApiTestCase):
 
         response = self.request_delete(
             'emotionalneed-detail', urlargs=[eneed.id], auth_user=other_user)
+        self.assertForbidden(response)
+
+        self.assertEqual(models.EmotionalNeed.objects.count(), 1)
+
+    def test_delete_as_partner_is_forbidden(self):
+        models.connect_partners(self.user, self.partner)
+
+        eneed = models.EmotionalNeed.objects.create(user=self.user, name='hugs', state_value_type=0)
+
+        response = self.request_delete(
+            'emotionalneed-detail',
+            urlargs=[eneed.id],
+            auth_user=self.partner)
         self.assertForbidden(response)
 
         self.assertEqual(models.EmotionalNeed.objects.count(), 1)
