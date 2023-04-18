@@ -120,7 +120,7 @@ class MeSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ['id', 'first_name',
+        fields = ['id', 'first_name', 'email',
                   'partner_user', 'partner_name', 'partner_invite_code',
                   'unread_letters_count']
 
@@ -139,7 +139,7 @@ class UserUpdateSerializer(drf_serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ['first_name', 'partner_name']
+        fields = ['first_name', 'partner_name', 'email']
 
 
 class ConnectPartnerSerializer(drf_serializers.Serializer):

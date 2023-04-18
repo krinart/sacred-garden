@@ -101,12 +101,23 @@ class TestUserViewSet(ApiTestCase):
             'user-detail',
             urlargs=[self.user1.id],
             auth_user=self.user1,
-            data={'first_name': 'Jon', 'partner_name': 'Eva'})
+            data={'first_name': 'Jon', 'partner_name': 'Eva', 'email': 'joe@example.com'})
         self.assertSuccess(response)
 
         updated_user = models.User.objects.get(id=self.user1.id)
         self.assertEqual(updated_user.first_name, 'Jon')
         self.assertEqual(updated_user.partner_name, 'Eva')
+        self.assertEqual(updated_user.email, 'joe@example.com')
+
+    def test_update_email_is_taken(self):
+        response = self.request_patch(
+            'user-detail',
+            urlargs=[self.user1.id],
+            auth_user=self.user1,
+            data={'first_name': 'Jon', 'partner_name': 'Eva', 'email': 'user2@example.com'})
+        self.assertBadRequest(
+            response,
+            errors={'email': [exceptions.ErrorDetail(string='user with this email address already exists.', code='unique')]})
 
     def test_update_user_unauthorized(self):
         response = self.request_patch(
@@ -129,6 +140,7 @@ class TestUserViewSet(ApiTestCase):
         expected_data = {
             'id': self.user1.id,
             'first_name': 'John',
+            'email': 'user1@example.com',
             'partner_user': None,
             'partner_name': 'Eva_Love',
             'partner_invite_code': self.user1.partner_invite_code,
@@ -149,6 +161,7 @@ class TestUserViewSet(ApiTestCase):
         expected_data = {
             'id': self.user1.id,
             'first_name': 'John',
+            'email': 'user1@example.com',
             'partner_user': {
                 'id': self.user2.id,
                 'first_name': self.user2.first_name,
