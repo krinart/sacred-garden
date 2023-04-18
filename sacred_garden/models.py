@@ -183,7 +183,6 @@ def disconnect_partner(user):
     partner_user.save()
 
 
-
 def get_emotional_needs_with_prefetched_current_values(user=None):
     qs = EmotionalNeed.objects.prefetch_related(
         models.Prefetch(
@@ -206,14 +205,14 @@ def find_emotional_need_statuses(eneed, user=None, partner_user=None):
         emotional_need=eneed,
     )
 
-    if user:
-        qs = qs.filter(
-            emotional_need__user=user,
-        )
-    else:
-        qs = qs.filter(
-            partner_user=partner_user,
-        )
+    # TODO: This was removed. For now the decision is to return all states.
+    # Maybe in the future there will be a better way to handle this.
+    # We are still saving current partner for each state.
+
+    # if partner_user:
+    #     qs = qs.filter(
+    #         partner_user=partner_user,
+    #     )
 
     qs = qs.order_by('created_at')
 

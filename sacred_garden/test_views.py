@@ -578,9 +578,10 @@ class TestEmotionalNeedViewSet(ApiTestCase):
             'emotionalneed-state-history', urlargs=[eneed.id], auth_user=self.partner)
         self.assertSuccess(response, expected_status_code=200)
 
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]['id'], ens2.id)
-        self.assertEqual(response.data[1]['id'], ens3.id)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['id'], ens1.id)
+        self.assertEqual(response.data[1]['id'], ens2.id)
+        self.assertEqual(response.data[2]['id'], ens3.id)
 
     def test_history_forbidden(self):
         eneed = models.EmotionalNeed.objects.create(user=self.user, name='Hugs', state_value_type=0)
