@@ -16,10 +16,10 @@ class UserAdmin(DjangoUserAdmin):
     form = UserChangeForm
     model = models.User
     list_display = ("email", "is_staff", "is_active",)
-    list_filter = ("email", "is_staff", "is_active",)
+    list_filter = ("is_staff", "is_active",)
     fieldsets = (
         (None, {"fields": ("email", "first_name", "password",
-                           "partner_user", "partner_name", "partner_invite_code")}),
+                           "partner_user", "partner_name", "partner_invite_code", "is_sample")}),
         ("Invite", {"fields": ("is_invited", "invite_code")}),
         ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
     )
@@ -38,8 +38,8 @@ class UserAdmin(DjangoUserAdmin):
 
 
 class EmotionalNeedStateAdmin(admin.ModelAdmin):
-    list_filter = ('emotional_need__name', )
-    list_display = ('__str__', 'created_at', )
+    list_filter = ('emotional_need', )
+    list_display = ('__str__', 'created_at', 'is_current')
     ordering = ('-created_at', )
 
 

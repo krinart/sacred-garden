@@ -14,6 +14,7 @@ from rest_framework.response import Response
 
 from sacred_garden import emails
 from sacred_garden import models
+from sacred_garden import sample_data
 from sacred_garden import serializers
 
 
@@ -30,7 +31,7 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         user = request.user
         partner_user = user.partner_user
 
-        emotional_needs = models.get_emotional_needs_with_prefetched_current_values(user=user)
+        emotional_needs = models.get_emotional_needs_with_prefetched_current_values(user)
         eneeds_serializer = serializers.EmotionalNeedSerializer(
             instance=emotional_needs, many=True)
 
@@ -39,8 +40,7 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         data['emotional_needs'] = eneeds_serializer.data
 
         if partner_user:
-            partner_emotional_needs = models.get_emotional_needs_with_prefetched_current_values(
-                user=partner_user)
+            partner_emotional_needs = models.get_emotional_needs_with_prefetched_current_values(partner_user, by_partner=user)
             partner_eneeds_serializer = serializers.EmotionalNeedSerializer(
                 instance=partner_emotional_needs, many=True)
             data['partner_user']['emotional_needs'] = partner_eneeds_serializer.data
@@ -75,6 +75,37 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         user.set_password(serializer.data['password'])
         user.save()
 
+        return Response()
+
+
+class EmotionalNeedPermission(drf_permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, user):
+        return user == request.user
+
+
+class SampleDataViewSet(viewsets.GenericViewSet):
+
+    queryset = models.User.objects.all()
+    permission_classes = [drf_permissions.IsAuthenticated, EmotionalNeedPermission]
+
+    @action(detail=True, methods=['POST'])
+    def populate_sample_data(self, *args, **kwargs):
+
+        # Do not populate sample data if user has a partner
+        if self.request.user.partner_user:
+            self.permission_denied(self.request)
+
+        sample_data.populate_sample_user_data(self.request.user)
+
+        return Response()
+
+    @action(detail=True, methods=['POST'])
+    def clean_sample_data(self, *args, **kwargs):
+        sample_data.clean_sample_user_data(self.request.user)
         return Response()
 
 

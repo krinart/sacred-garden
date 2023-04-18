@@ -146,6 +146,7 @@ class TestUserViewSet(ApiTestCase):
             'partner_invite_code': self.user1.partner_invite_code,
             'emotional_needs': [],
             'unread_letters_count': 0,
+            'has_sample_data': False,
         }
 
         self.assertSuccess(response, expected_data=expected_data)
@@ -171,6 +172,7 @@ class TestUserViewSet(ApiTestCase):
             'partner_invite_code': self.user1.partner_invite_code,
             'emotional_needs': [],
             'unread_letters_count': 1,
+            'has_sample_data': False,
         }
 
         self.assertSuccess(response, expected_data=expected_data)

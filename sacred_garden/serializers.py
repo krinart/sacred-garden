@@ -123,7 +123,7 @@ class MeSerializer(drf_serializers.ModelSerializer):
         model = models.User
         fields = ['id', 'first_name', 'email',
                   'partner_user', 'partner_name', 'partner_invite_code',
-                  'unread_letters_count']
+                  'unread_letters_count', 'has_sample_data']
 
     def get_unread_letters_count(self, instance):
         if not instance.partner_user:

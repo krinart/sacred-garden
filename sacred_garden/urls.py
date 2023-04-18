@@ -6,6 +6,7 @@ from sacred_garden import views
 
 router = routers.SimpleRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'sample-data', views.SampleDataViewSet)
 router.register(r'emotional-needs', views.EmotionalNeedViewSet)
 router.register(r'emotional-need-states', views.EmotionalNeedStateViewSet)
 router.register(r'emotional-letters', views.EmotionalLetterViewSet)

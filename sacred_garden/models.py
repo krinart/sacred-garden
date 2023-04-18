@@ -24,6 +24,9 @@ class User(AbstractUser):
     is_invited = models.BooleanField(default=False)
     invite_code = models.CharField(max_length=50, blank=True, null=True, unique=True)
 
+    is_sample = models.BooleanField(default=False)
+    has_sample_data = models.BooleanField(default=False)
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -44,6 +47,10 @@ class EmotionalNeed(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     state_value_type = models.IntegerField(choices=StateValueType.choices)
+
+    is_sample = models.BooleanField(default=False)
+    sample_user_partner = models.ForeignKey(
+        User, related_name='foo', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name} ({self.user})'
@@ -183,17 +190,23 @@ def disconnect_partner(user):
     partner_user.save()
 
 
-def get_emotional_needs_with_prefetched_current_values(user=None):
+def get_emotional_needs_with_prefetched_current_values(user, by_partner=None):
     qs = EmotionalNeed.objects.prefetch_related(
         models.Prefetch(
             'emotionalneedstate_set',
             queryset=EmotionalNeedState.objects.filter(is_current=True),
             to_attr=PREFETCHED_CURRENT_VALUES_ATTR_NAME,
         )
-    )
+    ).filter(user=user)
 
-    if user:
-        qs = qs.filter(user=user)
+    if user.is_sample:
+        assert by_partner is not None, "partner is required for sample user"
+        qs = qs.filter(sample_user_partner=by_partner)
+
+    # When reading partner's emotional needs, do not read their sample data (if any)
+    # TODO: Remove when deleting sample data
+    elif by_partner:
+        qs = qs.filter(is_sample=False)
 
     return qs
 
