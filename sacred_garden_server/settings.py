@@ -170,3 +170,9 @@ django.utils.translation.ugettext = gettext
 STATIC_ROOT = "static/"
 
 PASSWORD_RESET_FROM_EMAIL = "no-reply@sacredgarden.love"
+
+UI_DOMAIN = CORS_ALLOWED_ORIGINS[0]
+
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, "emails")

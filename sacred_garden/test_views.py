@@ -331,7 +331,7 @@ class TestRequestResetPassword(ApiTestCase):
             mock.ANY,
             settings.PASSWORD_RESET_FROM_EMAIL,
             ["user1@example.com"],
-            fail_silently=True,
+            fail_silently=False,
         )
 
     @mock.patch('sacred_garden.emails.send_mail')
@@ -367,6 +367,11 @@ class TestResetPassword(ApiTestCase):
 
         auth_user = authenticate(email='user1@example.com', password='new_password')
         self.assertEqual(auth_user.id, user.id)
+
+        self.assertEqual(list(response.data.keys()), ['token'])
+        payload = jwt_decode_handler(response.data['token'])
+
+        self.assertEqual(payload['user_id'], user.id)
 
     def test_invalid_token(self):
         user = models.User.objects.create(email='user1@example.com')

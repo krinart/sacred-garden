@@ -78,7 +78,6 @@ class UserViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         return Response()
 
 
-
 class CheckUserView(drf_views.APIView):
 
     authentication_classes = []
@@ -119,12 +118,9 @@ class RequestResetPassword(drf_views.APIView):
         data = serializer.data
 
         user = generics.get_object_or_404(models.User, email=data['email'])
-        token = emails.send_reset_password(request, user)
+        emails.send_reset_password(user)
 
-        # TODO: remove
-        return Response({
-            'token': token
-        })
+        return Response()
 
 
 class ResetPassword(drf_views.APIView):
@@ -145,7 +141,11 @@ class ResetPassword(drf_views.APIView):
         user.set_password(data['password'])
         user.save()
 
-        return Response()
+        payload = jwt_payload_handler(user)
+
+        return Response({
+            'token': jwt_encode_handler(payload),
+        })
 
 
 class JoinWaitListView(drf_views.APIView):
