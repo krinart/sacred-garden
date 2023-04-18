@@ -2,13 +2,16 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from .forms import UserCreationForm, UserChangeForm
+from sacred_garden import emails
 from sacred_garden import models
 
 
 @admin.action(description="Invite user")
 def invite_user(modeladmin, request, queryset):
     assert len(queryset) == 1, "Invitation works only for a single user"
-    models.invite_user(queryset[0])
+    user = queryset[0]
+    models.invite_user(user)
+    emails.send_invite(user)
 
 
 class UserAdmin(DjangoUserAdmin):

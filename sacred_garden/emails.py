@@ -6,6 +6,18 @@ from django.conf import settings
 from urllib.parse import urlencode
 
 
+def send_invite(user):
+    link = f"{settings.UI_DOMAIN}/login"
+
+    send_mail(
+        "Sacred Garden: You've been invited",
+        f"Click following link to create an account: <a href='{link}'>Open form</a>",
+        settings.PASSWORD_INVITE_FROM_EMAIL,
+        [user.email],
+        fail_silently=False,
+    )
+
+
 def send_reset_password(user):
     token_generator = PasswordResetTokenGenerator()
     token = token_generator.make_token(user)
