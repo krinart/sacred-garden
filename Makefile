@@ -20,7 +20,7 @@ dpush:
 	docker push krinart/sacred-garden-api
 
 temp:
-	DJANGO_ALLOWED_HOSTS=api.sacredgarden.love DJANGO_CORS_ALLOWED_ORIGINS=https://sacredgarden.love SQL_ENGINE=django.db.backends.postgresql SQL_USER=dbmasteruser SQL_PASSWORD="sv23t02i5G!" SQL_DATABASE=sacred_garden_api SQL_HOST=ls-94cc5541b25233f135fb50b7b3872d2974734af2.czralkya9hre.us-west-2.rds.amazonaws.com SQL_PORT=5432 EMAIL_BACKEND=django_ses.SESBackend python manage.py runserver
+	DJANGO_ALLOWED_HOSTS=api.sacredgarden.love DJANGO_CORS_ALLOWED_ORIGINS=https://sacredgarden.love SQL_ENGINE=django.db.backends.postgresql SQL_USER=dbmasteruser SQL_PASSWORD="sv23t02i5G!" SQL_DATABASE=sacred_garden_api SQL_HOST=ls-94cc5541b25233f135fb50b7b3872d2974734af2.czralkya9hre.us-west-2.rds.amazonaws.com SQL_PORT=5432 EMAIL_BACKEND=django_ses.SESBackend DEBUG=1 python manage.py runserver
 
 ssh:
 	ssh bitnami@34.214.220.163
