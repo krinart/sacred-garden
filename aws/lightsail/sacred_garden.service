@@ -14,7 +14,7 @@ Environment=SQL_PASSWORD="sv23t02i5G!"
 Environment=SQL_DATABASE=sacred_garden_api
 Environment=SQL_HOST=ls-94cc5541b25233f135fb50b7b3872d2974734af2.czralkya9hre.us-west-2.rds.amazonaws.com
 Environment=SQL_PORT=5432
-Environment=EMAIL_BACKEND=anymail.backends.mailgun.EmailBackend
+Environment=EMAIL_BACKENDdjango_ses.SESBackend
 ExecStart=/home/bitnami/sacred-garden/.venv/bin/gunicorn sacred_garden_server.wsgi --bind 0.0.0.0:8000 --workers 4 --error-logfile /var/log/gunicorn/error.log
 
 [Install]

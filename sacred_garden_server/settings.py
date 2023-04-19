@@ -180,10 +180,8 @@ PASSWORD_INVITE_FROM_EMAIL = "no-reply@sacredgarden.love"
 
 UI_DOMAIN = CORS_ALLOWED_ORIGINS[0]
 
-# EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.filebased.EmailBackend")
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "emails")
-ANYMAIL = {
-    "MAILGUN_API_KEY": "e9c25cef81806dc8f7897f384a932486-181449aa-9a77bfc5",
-    # "MAILGUN_SENDER_DOMAIN": 'mg.example.com',  # your Mailgun domain, if needed
-}
+
+AWS_ACCESS_KEY_ID = 'AKIAWC7VALC3AJSCHSKH'
+AWS_SECRET_ACCESS_KEY = 'ahQ9/SeCsmbwq95OTm+zxICMPXlwxhXLI1yXxsgZ'
