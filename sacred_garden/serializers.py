@@ -126,11 +126,8 @@ class MeSerializer(drf_serializers.ModelSerializer):
                   'unread_letters_count', 'has_sample_data']
 
     def get_unread_letters_count(self, instance):
-        if not instance.partner_user:
-            return 0
-
         return models.EmotionalLetter.objects.filter(
-            sender=instance.partner_user,
+            # sender=instance.partner_user,
             recipient=instance,
             is_read=False,
         ).count()
