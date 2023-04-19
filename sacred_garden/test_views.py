@@ -1220,12 +1220,12 @@ class TestEmotionalLetterViewSet(ApiTestCase):
         )
 
         response = self.request_put(
-            'emotionalletter-mark-as-read', urlargs=[letter.id], auth_user=self.user1)
+            'emotionalletter-mark-as-read', urlargs=[letter.id], auth_user=self.user2)
         self.assertSuccess(response)
 
         self.assertTrue(models.EmotionalLetter.objects.get().is_read)
 
-    def test_mark_as_read_error(self):
+    def test_mark_as_read_other_user_returns_error(self):
         other_user = models.User.objects.create(email='user3@example.com')
         models.connect_partners(self.user1, self.user2)
 
@@ -1255,12 +1255,12 @@ class TestEmotionalLetterViewSet(ApiTestCase):
         )
 
         response = self.request_put(
-            'emotionalletter-mark-as-acknowledged', urlargs=[letter.id], auth_user=self.user1)
+            'emotionalletter-mark-as-acknowledged', urlargs=[letter.id], auth_user=self.user2)
         self.assertSuccess(response)
 
         self.assertTrue(models.EmotionalLetter.objects.get().is_acknowledged)
 
-    def test_mark_as_acknowledged_error(self):
+    def test_mark_as_acknowledged_other_user_returns_error(self):
         other_user = models.User.objects.create(email='user3@example.com')
         models.connect_partners(self.user1, self.user2)
 

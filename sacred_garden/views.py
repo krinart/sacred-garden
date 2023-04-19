@@ -2,6 +2,7 @@ from itertools import chain
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.db.models import Q
+from rest_framework.permissions import SAFE_METHODS
 
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
@@ -312,9 +313,13 @@ class EmotionalLetterPermission(drf_permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, letter):
-        if request.method == 'DELETE' or request.method == 'PUT':
-            return letter.sender == request.user
-        return letter.sender == request.user or letter.recipient == request.user
+        if request.method in SAFE_METHODS:
+            return letter.recipient == request.user or letter.sender == request.user
+
+        if 'mark_as_read' in request.path or 'mark_as_acknowledged' in request.path:
+            return letter.recipient == request.user
+
+        return letter.sender == request.user
 
 
 class EmotionalLetterViewSet(viewsets.ModelViewSet):
