@@ -171,6 +171,8 @@ django.utils.translation.ugettext = gettext
 
 STATIC_ROOT = "static/"
 
+CSRF_TRUSTED_ORIGINS=['https://*.sacredgarden.love']
+
 SERVER_EMAIL = "no-reply@sacredgarden.love"
 DEFAULT_FROM_EMAIL = "no-reply@sacredgarden.love"
 PASSWORD_RESET_FROM_EMAIL = "no-reply@sacredgarden.love"
