@@ -210,9 +210,9 @@ def create_self_sample_emotional_letters(user, sample_user):
     l = models.EmotionalLetter.objects.create(
         sender=user,
         recipient=sample_user,
-        appreciation_text="qweasdkvblaskjbv sdlkjfhsa lkdfhasdlkfhsaldk fhalskhf lakjsdh flkasd glsakfgl as",
-        text="qweladkf lskv silufh wileufh siudfh sidufh sidufh isdu fh isudfh sidf skdjbf skdj",
-        advice_text="qwe;ksdkjb skljf sdklhf  klhfksd hfkldh fkjsd",
+        appreciation_text="Hey love, I just wanted to take a moment to express my deep gratitude for everything you do for me and for us. You are an incredible partner, and I feel so lucky to have you in my life. From the way you support me through the ups and downs, to the way you always make me laugh, and the unwavering love you show me, I truly don't know where I would be without you. Your presence in my life has made everything so much better, and I just wanted to let you know how much I appreciate you. Thank you for being you, and for being such an amazing partner.",
+        text="I have something to share with you that happened a few days ago. While I understand that you may not have intended to, your words caused me to feel hurt. I want to clarify that I am not placing blame or accusing you of any wrongdoing. However, I am struggling to process my emotions and would appreciate your support. During our encounter with the sweet couple in the park, I brought up the topic of religion, and you responded with something along the lines of \"please, not this topic again.\" It is important for you to know that discussing this topic is important to me, and despite your initial response, we ended up having a great conversation which they seemed to enjoy. I cannot fully explain why your words impacted me, but it felt as if you were tired of me and did not accept a significant part of who I am.",
+        advice_text="I would greatly appreciate it if you could be more accepting of me and refrain from making comments that could be hurtful. While I understand that not everyone is comfortable discussing religion, I would appreciate it if you could trust my judgement when it comes to the topics that I choose to discuss with others. Although I know that you did not mean to upset me, I struggled to process my emotions on my own and now need your help to move past this. Thank you for being understanding, and please know that I love you.",
         is_read=True,
         is_acknowledged=False,
     )
@@ -226,9 +226,9 @@ def create_partner_sample_emotional_letters(user, sample_user):
     l = models.EmotionalLetter.objects.create(
         sender=sample_user,
         recipient=user,
-        appreciation_text="qweasdkvblaskjbv sdlkjfhsa lkdfhasdlkfhsaldk fhalskhf lakjsdh flkasd glsakfgl as",
-        text="qweladkf lskv silufh wileufh siudfh sidufh sidufh isdu fh isudfh sidf skdjbf skdj",
-        advice_text="qwe;ksdkjb skljf sdklhf  klhfksd hfkldh fkjsd",
+        appreciation_text="Hey, I just wanted to take a moment to tell you how much I appreciate you. You are such an amazing partner and I feel so lucky to have you in my life. You always know how to make me laugh and feel better when I'm down, and your unwavering support and encouragement means everything to me. You make me feel loved and appreciated every day, and I am so grateful for your presence in my life. Thank you for being such an incredible partner and for all that you do. I love you.",
+        text="There is something important that I want to share with you. Yesterday, we celebrated our anniversary, and I hope you understand just how meaningful this day is to me. As someone who is quite sentimental, I care deeply about commemorating special occasions like this, particularly because our relationship is such an important part of my life and I love you so much. I think you noticed that I had prepared a gift for you that I had made myself, and I hope that you enjoyed it. Unfortunately, what I need to express now is something that has caused me some hurt. It's not about the gift itself, but rather that you didn't give me a gift. I understand that this feeling of hurt stems from my own expectations, but it is still difficult for me to reconcile emotionally. I recognize that our differing attitudes towards gift-giving is a logical explanation, but on an emotional level, I still feel hurt.",
+        advice_text="It would mean a lot to me if you could acknowledge that you understand how I feel. This would help me process my emotions and reassure me that our connection is as strong as it usually is. After that, I would love to discuss how we can avoid similar situations in the future and find a compromise that works for both of us. I am willing to adjust my expectations because our relationship is so important to me and I love you deeply. Sending my love to you :)",
         is_read=True,
         is_acknowledged=False,
     )
