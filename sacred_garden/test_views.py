@@ -347,6 +347,7 @@ class TestRequestResetPassword(ApiTestCase):
             settings.PASSWORD_RESET_FROM_EMAIL,
             ["user1@example.com"],
             fail_silently=False,
+            html_message=mock.ANY,
         )
 
     @mock.patch('sacred_garden.emails.send_mail')
